@@ -83,7 +83,7 @@
     </div>
 
     <script src="./assets/js/menu_options.js"></script>
-   
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -132,9 +132,9 @@
         // Función para editar un evento
         function editEvent(eventId) {
             console.log('Edit event with ID:', eventId);
-            window.location.href = './';
-
+            window.location.href = './eventos_master.php?id=' + eventId;
         }
+
 
         // Función para eliminar un evento
         function deleteEvent(eventId) {
