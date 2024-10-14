@@ -1,0 +1,28 @@
+.no_info {
+  width: 90%;
+  height: 80vh;
+  margin: auto;
+  background-color: var(--bg-contrast);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  font-weight: 700;
+  padding: 2rem;
+  color: var(--bg-color);
+  border-radius: 1rem;
+}
+
+.no_info img {
+  max-width: 50%;
+}
+
+.no_info a {
+  background-color: var(--blue-color);
+  color: var(--white-color);
+  padding: 1rem;
+  border-radius: 1rem;
+  font-size: .7rem;
+  font-weight: 400;
+  text-decoration: none;
+}
