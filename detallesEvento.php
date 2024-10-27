@@ -234,7 +234,7 @@ function drawRectangle(x, y, width, height, label, type) {
     if (type === 'individual') {
         rectangle.addEventListener('click', function() {
             alert(`Mesa seleccionada: ${label}`); // Acción al hacer clic
-            // Puedes realizar otras acciones aquí si lo deseas
+            window.location.href = "reservacionEvento.php";
         });
     }
 
