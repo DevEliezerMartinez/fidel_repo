@@ -95,9 +95,9 @@
             <form class="form_generator" action="">
                 <p>Mapa:</p>
                 <div class="row">
-                    <label for="Columnas">Columnas:</label>
+                    <label for="Columnas">Columnas: X</label>
                     <input type="number" name="number" id="columnas" max="20" min="1">
-                    <label for="Filas">Filas:</label>
+                    <label for="Filas">Filas: Y</label>
                     <input type="number" name="number" id="filas" max="20" min="1">
                 </div>
                 <button id="draw-rect">Dibujar Rectángulo</button> <!-- Botón para dibujar el rectángulo -->
@@ -125,18 +125,38 @@
 
                 <!-- Aquí es donde añadimos el Select dinámico de Sillas por Mesa -->
                 <p for="sillasxmesa">Sillas x mesa</p>
-                <select name="sillasxmesa" id="sillasxmesa">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                </select>
+
+                <div class="cantidad_sillas_container">
+                    <span>Cantidad: </span>
+                    <select name="sillasxmesa" id="sillasxmesa">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+
+                <p for="">Detalles de venta:</p>
+                <div class="precios">
+                    <span>Precio silla adulto $</span>
+                    <input type="number" name="precioAdulto" id="precioAdulto">
+                </div>
+
+                <div class="precios">
+                    <span>Precio silla menor $</span>
+                    <input type="number" name="precioMenor" id="precioMenor">
+                </div>
+
+
+                <input class="submitPrincipal" id="save" type="submit" value="Guardar cambios">
+
+
             </form>
         </section>
 
@@ -144,121 +164,174 @@
 
 
     </main>
-    <script>
-        // Función para dibujar el rectángulo basado en valores de columnas y filas
-        function drawRectangle(x, y, width, height) {
-            const rect = document.createElement('div');
-            rect.classList.add('rect');
-            const gridWidth = 100 / 20; // Hay 20 columnas
-            const gridHeight = 100 / 20; // Hay 20 filas
+<script>
+    // Función para dibujar el rectángulo basado en valores de columnas y filas
+    function drawRectangle(x, y, width, height, label = '', type = '') {
+        console.log("type recibido", type);
+        console.log("valores x,y", x," ",y)
+        const rect = document.createElement('div');
+        rect.classList.add('rect');
+        const gridWidth = 100 / 21; // Cambiado a 21 columnas
+        const gridHeight = 100 / 21; // Cambiado a 21 filas
 
-            rect.style.left = `${(x - 1) * gridWidth}%`;
-            rect.style.top = `${(y - 1) * gridHeight}%`;
-            rect.style.width = `${width * gridWidth}%`;
-            rect.style.height = `${height * gridHeight}%`;
-            rect.style.zIndex = 10;
-            document.querySelector('.visualizer').appendChild(rect);
+        rect.style.left = `${x * gridWidth}%`; // Usar x directamente
+        rect.style.top = `${y * gridHeight}%`; // Usar y directamente
+        rect.style.width = `${width * gridWidth}%`;
+        rect.style.height = `${height * gridHeight}%`;
+        rect.style.zIndex = 10;
+        rect.style.textAlign = "center";
+
+        // Si el tipo es "Mesas", hacer que el rectángulo sea circular
+        if (type === 'Mesas') {
+            rect.style.borderRadius = '100%'; // Hacer el elemento circular
         }
 
-        // Función que se ejecuta al hacer clic en el botón "Dibujar Rectángulo"
-        document.getElementById('draw-rect').addEventListener('click', function(event) {
-            event.preventDefault();
-            const columnas = parseInt(document.getElementById('columnas').value);
-            const filas = parseInt(document.getElementById('filas').value);
+        // Añadir el texto al rectángulo
+        rect.innerText = label;
 
-            if (columnas > 0 && filas > 0 && columnas <= 20 && filas <= 20) {
-                drawRectangle(1, 1, columnas, filas);
-            } else {
-                alert("Por favor, introduce valores válidos para columnas y filas.");
-            }
-        });
-    </script>
+        // Añadir el rectángulo a la visualización
+        document.querySelector('.visualizer').appendChild(rect);
+    }
 
-    <script>
-        // Función para generar filas dinámicas
-        function generateRows(type, count, containerId) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            for (let i = 0; i < count; i++) {
-                const row = document.createElement('div');
-                row.classList.add('row_extra');
-                row.innerHTML = `
-                <div class="left">
-                    <span>Posición</span>
-                    <span>${type} ${i + 1}</span>
-                </div>
-                <label for="${type}_X_${i}">X:</label>
-                <input type="number" id="${type}_X_${i}" name="${type}_X_${i}">
-                <label for="${type}_Y_${i}">Y:</label>
-                <input type="number" id="${type}_Y_${i}" name="${type}_Y_${i}">
-                <button class="draw-scenario" data-index="${i}" data-type="${type}">Dibujar ${type}</button>
-            `;
-                container.appendChild(row);
-            }
+    // Función que se ejecuta al hacer clic en el botón "Dibujar Rectángulo"
+    document.getElementById('draw-rect').addEventListener('click', function(event) {
+        event.preventDefault();
+        const columnas = parseInt(document.getElementById('columnas').value);
+        const filas = parseInt(document.getElementById('filas').value);
 
-            const buttons = container.querySelectorAll('.draw-scenario');
-            buttons.forEach(button => {
-                button.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const index = this.getAttribute('data-index');
-                    const x = parseInt(document.getElementById(`${type}_X_${index}`).value);
-                    const y = parseInt(document.getElementById(`${type}_Y_${index}`).value);
+        if (columnas > 0 && filas > 0 && columnas <= 21 && filas <= 21) { // Cambiado a 21
+            drawRectangle(1, 1, columnas, filas);
+        } else {
+            alert("Por favor, introduce valores válidos para columnas y filas.");
+        }
+    });
+</script>
 
-                    if (x > 0 && y > 0) {
-                        drawRectangle(x, y, 1, 1);
-                    } else {
-                        alert(`Por favor, introduce valores válidos para las coordenadas del ${type} ${index + 1}.`);
-                    }
-                });
-            });
+<script>
+    // Función para generar filas dinámicas
+    function generateRows(type, count, containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+            const row = document.createElement('div');
+            row.classList.add('row_extra');
+            row.innerHTML = `
+            <div class="left">
+                <span>Posición</span>
+                <span>${type} ${i + 1}</span>
+            </div>
+            <label for="${type}_X_${i}">X:</label>
+            <input type="number" id="${type}_X_${i}" name="${type}_X_${i}">
+            <label for="${type}_Y_${i}">Y:</label>
+            <input type="number" id="${type}_Y_${i}" name="${type}_Y_${i}">
+            <button class="draw-scenario" data-index="${i}" data-type="${type}">Dibujar ${type}</button>
+        `;
+            container.appendChild(row);
         }
 
-        // Agregar listeners a los inputs de cantidad
-        document.getElementById('escenarioCantidad').addEventListener('input', function() {
-            const cantidad = parseInt(this.value);
-            if (!isNaN(cantidad)) {
-                generateRows('Escenario', cantidad, 'escenarioRows');
-            }
-        });
+        const buttons = container.querySelectorAll('.draw-scenario');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                console.log("click para dibujar escenario")
+                event.preventDefault();
+                const index = this.getAttribute('data-index');
+                console.log("index", index)
+                const x = parseInt(document.getElementById(`${type}_X_${index}`).value);
+                const y = parseInt(document.getElementById(`${type}_Y_${index}`).value);
 
-        document.getElementById('pistaCantidad').addEventListener('input', function() {
-            const cantidad = parseInt(this.value);
-            if (!isNaN(cantidad)) {
-                generateRows('Pista', cantidad, 'pistaRows');
-            }
-        });
+                if (x > 0 && y > 0) {
+                    const label = `${type.charAt(0)}${parseInt(index) + 1}`; // Concatena la letra en minúscula y el número sin ceros adicionales
 
-        document.getElementById('mesasCantidad').addEventListener('input', function() {
-            const cantidad = parseInt(this.value);
-            if (!isNaN(cantidad)) {
-                generateRows('Mesas', cantidad, 'mesasRows');
-            }
-        });
-    </script>
-
-    <script>
-        const visualizer = document.querySelector('.visualizer');
-
-        // Crear la cuadrícula de 20x20
-        for (let row = 0; row < 20; row++) {
-            for (let col = 0; col < 20; col++) {
-                const cell = document.createElement('div');
-                cell.classList.add('cell');
-
-                if (row === 0) {
-                    cell.innerText = col;
-                    cell.classList.add('axis-label');
-                } else if (col === 0) {
-                    cell.innerText = row;
-                    cell.classList.add('axis-label');
+                    drawRectangle(x, y, 1, 1, label, type);
                 } else {
-                    cell.innerText = '';
+                    alert(`Por favor, introduce valores válidos para las coordenadas del ${type} ${index + 1}.`);
                 }
+            });
+        });
+    }
 
-                visualizer.appendChild(cell);
-            }
+    // Agregar listeners a los inputs de cantidad
+    document.getElementById('escenarioCantidad').addEventListener('input', function() {
+        const cantidad = parseInt(this.value);
+        if (!isNaN(cantidad)) {
+            generateRows('Escenario', cantidad, 'escenarioRows');
         }
-    </script>
+    });
+
+    document.getElementById('pistaCantidad').addEventListener('input', function() {
+        const cantidad = parseInt(this.value);
+        if (!isNaN(cantidad)) {
+            generateRows('Pista', cantidad, 'pistaRows');
+        }
+    });
+
+    document.getElementById('mesasCantidad').addEventListener('input', function() {
+        const cantidad = parseInt(this.value);
+        if (!isNaN(cantidad)) {
+            generateRows('Mesas', cantidad, 'mesasRows');
+        }
+    });
+</script>
+
+<script>
+    const visualizer = document.querySelector('.visualizer');
+
+    // Crear la cuadrícula de 21x21
+    for (let row = 0; row < 21; row++) { // Cambiado a 21
+        for (let col = 0; col < 21; col++) { // Cambiado a 21
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+
+            if (row === 0) {
+                cell.innerText = col;
+                cell.classList.add('axis-label');
+            } else if (col === 0) {
+                cell.innerText = row;
+                cell.classList.add('axis-label');
+            } else {
+                cell.innerText = '';
+            }
+
+            visualizer.appendChild(cell);
+        }
+    }
+
+    // Selecciona el botón por su ID y agrega el event listener
+    document.getElementById('save').addEventListener('click', function(event) {
+        event.preventDefault(); // Evita el envío del formulario, si aplica
+        saveConfiguration(); // Llama a la función para guardar la configuración
+        console.log("Configuración guardada"); // Mensaje opcional para confirmar
+    });
+
+    function saveConfiguration() {
+        // Obtener todos los elementos renderizados en el contenedor `.visualizer`
+        const elements = document.querySelectorAll('.visualizer .rect');
+        const config = [];
+
+        elements.forEach(element => {
+            const itemConfig = {
+                x: parseFloat(element.style.left) / (100 / 21) + 1, // Cambiado a 21
+                y: parseFloat(element.style.top) / (100 / 21) + 1, // Cambiado a 21
+                width: parseFloat(element.style.width) / (100 / 21), // Cambiado a 21
+                height: parseFloat(element.style.height) / (100 / 21), // Cambiado a 21
+                label: element.innerText,
+                type: element.classList.contains('circle') ? 'Mesas' : 'Other', // Determina el tipo basado en el estilo
+                styles: {
+                    borderRadius: element.style.borderRadius,
+                    textAlign: element.style.textAlign,
+                    zIndex: element.style.zIndex
+                }
+            };
+            config.push(itemConfig);
+        });
+
+        // Guardar configuración en localStorage (o enviarla a un servidor si es necesario)
+        localStorage.setItem('visualizerConfig', JSON.stringify(config));
+        //window.location.href = "adminEventos.php";
+    }
+</script>
+
+
 
 
 

@@ -39,6 +39,13 @@
     gap: 1rem;
 }
 
+@media only screen and (max-width: 600px) {
+    .principal_clase {
+     flex-direction: column-reverse;
+     align-items: center;
+    }
+  }
+
 
 
 .form_generator{
@@ -83,13 +90,22 @@
 
 #sillasxmesa{
     width: 30%;
+    border-radius: 20%;
+
+
     
 }
 
+.cantidad_sillas_container{
+    display: flex;
+    
+}
+
+
 .visualizer {
     display: grid;
-    grid-template-columns: repeat(20, 1fr); 
-    grid-template-rows: repeat(20, 1fr);
+    grid-template-columns: repeat(21, 1fr); 
+    grid-template-rows: repeat(21, 1fr);
     width: 65%;
     border-radius: 1rem;
     height: 600px;
@@ -125,4 +141,44 @@
     background: var(--alternative-blue);
     font-size: .8rem;
     margin-top: 1rem;
+}
+
+
+/* estilos inputs */
+
+/* Estilo general del input */
+/* Estilo general del input */
+input[type="number"] {
+    background-color: transparent; /* Fondo transparente */
+    border: none; /* Sin bordes alrededor */
+    border-bottom: 2px solid var(--bg-contrast); /* Borde inferior azul */
+    padding: 5px;
+    outline: none; /* Sin borde al hacer clic */
+    width: 50px; /* Ajusta el ancho como prefieras */
+    color: #000; /* Color del texto dentro del input */
+    font-size: 16px;
+}
+
+/* Estilo para navegadores basados en WebKit (Chrome, Safari, Edge) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none; /* Quita el estilo predeterminado */
+    appearance: none;
+    margin: 0;
+}
+
+/* Estilo para la flecha de incremento */
+input[type="number"]::-webkit-inner-spin-button {
+    background-color: #36A8D5; /* Fondo azul para las flechas */
+    color: white; /* Color blanco para el icono de las flechas */
+    border-radius: 2px; /* Bordes redondeados */
+    height: 12px; /* Ajusta la altura */
+    display: block;
+    padding: 5px 0; /* Espacio interno para dar 'gap' */
+    margin-top: 2px; /* Espacio entre las flechas */
+}
+
+
+.precios{
+    display: flex;
 }

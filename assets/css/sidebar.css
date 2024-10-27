@@ -12,6 +12,14 @@
 
 }
 
+@media only screen and (max-width: 600px) {
+    .sidebar {
+      background-color: lightblue;
+      width: 0%;
+      display: none;
+    }
+  }
+
 
 .header_sidebar{
     flex-direction: column;

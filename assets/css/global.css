@@ -41,10 +41,26 @@ main{
 
 }
 
+@media only screen and (max-width: 600px) {
+    main {
+      margin-left: 0%;
+    }
+  }
+
 
 .full_center{
     display: flex;
     justify-content: center;
     align-items: center;
 
+}
+
+
+.submitPrincipal{
+    background-color: var(--blue-color);
+    padding: .5rem .8rem;
+    border-radius: 1rem;
+    color: var(--white-color);
+    border: none;
+    margin: 1rem;
 }
