@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -31,13 +30,23 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // Generar el username (primer letra de nombre + primer letra de apellido)
+        $username = strtolower(substr($request->name, 0, 1) . substr($request->lastname, 0, 1));
+
+        $dd
+
+        // Crear el usuario con el role_id predeterminado de 1
         $user = User::create([
             'name' => $request->name,
+            'lastname' => $request->lastname,
             'email' => $request->email,
+            'username' => $username,  // Asignar el username
+            'role_id' => 1,           // Asignar el role_id por defecto
             'password' => Hash::make($request->password),
         ]);
 

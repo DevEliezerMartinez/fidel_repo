@@ -12,6 +12,11 @@
                     <x-text-input id="name" type="text" name="name" :value="old('name')" required autofocus placeholder="Ingrese su nombre" />
                     <x-input-error :messages="$errors->get('name')" />
                 </div>
+                <div class="form-group">
+                    <label for="name">{{ __('Apellido') }}</label>
+                    <x-text-input id="lastname" type="text" name="lastname" :value="old('lastname')" required autofocus placeholder="Ingrese su apellido" />
+                    <x-input-error :messages="$errors->get('lastname')" />
+                </div>
 
                 <!-- Email -->
                 <div class="form-group mt-4">

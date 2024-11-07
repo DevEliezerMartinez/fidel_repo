@@ -48,7 +48,7 @@
             </form>
         </div>
 
-        <span>{{ __('¿No tienes una cuenta?') }}</span>
+        <span>{{ __('¿No tienes una cuenta  ?') }}</span>
         <a href="{{ route('register') }}" class="ml-2 text-sm text-blue-600 underline hover:text-blue-800">
             {{ __('Registrate') }}
         </a>
