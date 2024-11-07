@@ -1,0 +1,166 @@
+.addUser{
+    border-radius: 1rem;
+    padding: .5rem .6rem;
+    background-color: var(--dark-blue);
+    color: var(--white-color);
+    border: none;
+    font-size: .8rem;
+}
+
+/* Estilos para el contenedor de la tabla */
+.table-container {
+    padding: 20px;
+    border: 1px solid #ccc; /* Borde del contenedor */
+    border-radius: 5px; /* Bordes redondeados */
+    margin-top: 20px; /* Espaciado superior */
+    background-color: #f9f9f9; /* Color de fondo */
+}
+
+/* Estilos para la tabla */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Para que no haya espacios entre las celdas */
+}
+
+th, td {
+    padding: 10px; /* Espaciado interno */
+    text-align: left; /* Alineación del texto */
+    font-family: "Poppins", sans-serif;
+    font-weight: 400 !important;
+}
+
+/* Estilos para los íconos */
+.icon {
+    width: 15px; /* Ancho de los íconos */
+    height: 15px; /* Alto de los íconos */
+    margin-right: 10px; /* Espaciado entre íconos */
+    cursor: pointer; /* Cambia el cursor al pasar sobre los íconos */
+    transition: transform 0.2s; /* Efecto de transición */
+}
+
+.icon:hover {
+    transform: scale(1.1); /* Efecto de zoom al pasar el mouse */
+}
+
+
+/* Estilos para el modal */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Mantiene el modal en la misma posición */
+    z-index: 1; /* Coloca el modal por encima de otros elementos */
+    left: 0;
+    top: 0;
+    width: 100%; /* Ancho completo */
+    height: 100%; /* Alto completo */
+    overflow: auto; /* Permite el scroll si es necesario */
+    background-color: rgb(0,0,0); /* Color de fondo negro */
+    background-color: rgba(0,0,0,0.4); /* Fondo negro con opacidad */
+}
+
+/* Contenido del modal */
+.modal_content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% desde el top y centrado */
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 1rem;
+    width: 50%; /* Ancho del contenido */
+
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+
+}
+.header_modal{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+#addUserForm{
+    display: flex;
+    flex-direction: column;
+
+}
+
+/* Estilos para los inputs del formulario */
+#addUserForm input {
+    border: none; /* Sin borde en los lados y en la parte superior */
+    border-bottom: 1px solid #888; /* Borde inferior */
+    padding: 8px; /* Espaciado interno */
+    width: 100%; /* Ancho completo */
+    margin-bottom: 15px; /* Espaciado entre inputs */
+    outline: none; /* Sin contorno al enfocarse */
+}
+
+/* Cambiar el color del borde inferior al enfocar el input */
+#addUserForm input:focus {
+    border-bottom: 2px solid var(--primary-color); /* Color de borde inferior al enfocarse */
+}
+
+
+/* Cerrar botón */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+/* Estilos generales para el select */
+#permisos {
+    border: none; /* Sin borde en los lados y en la parte superior */
+    border-bottom: 1px solid #888; /* Borde inferior */
+    background-color: transparent; /* Fondo transparente */
+    padding: 8px; /* Espaciado interno */
+    width: 100%; /* Ancho completo */
+    margin-bottom: 15px; /* Espaciado entre inputs */
+    outline: none; /* Sin contorno al enfocarse */
+    font-size: 16px; /* Tamaño de fuente */
+    color: #333; /* Color del texto */
+    appearance: none; /* Quitar la apariencia predeterminada */
+}
+
+/* Estilos para el borde inferior al enfocar el select */
+#permisos:focus {
+    border-bottom: 2px solid var(--primary-color); /* Color de borde inferior al enfocarse */
+}
+
+/* Añadir un ícono de flecha al select */
+#permisos::after {
+    content: "▼"; /* Flecha hacia abajo */
+    position: absolute; /* Posiciona absolutamente */
+    right: 10px; /* Ajuste a la derecha */
+    pointer-events: none; /* No interferir con clics */
+}
+
+/* Estilos para las opciones del select */
+#permisos option {
+    background-color: white; /* Fondo blanco para las opciones */
+    color: #333; /* Color del texto */
+    padding: 10px; /* Espaciado interno para opciones */
+}
+
+/* Estilo para el select cuando se abre */
+#permisos:focus option {
+    background-color: #f0f8ff; /* Color de fondo al abrir */
+}
+
+
+.submit_button{
+    width: 50%;
+    margin: auto;
+    padding: .5rem .8rem;
+    background-color: var(--dark-blue);
+    color: var(--white-color);
+    border: none;
+    border-radius: 1rem;
+}
+

@@ -1,0 +1,105 @@
+.no_info {
+  width: 90%;
+  height: 80vh;
+  margin: auto;
+  background-color: var(--bg-contrast);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  font-weight: 700;
+  padding: 2rem;
+  color: var(--bg-color);
+  border-radius: 1rem;
+}
+
+.no_info img {
+  max-width: 50%;
+}
+
+.no_info a {
+  background-color: var(--blue-color);
+  color: var(--white-color);
+  padding: 1rem;
+  border-radius: 1rem;
+  font-size: .7rem;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+
+.infomesas{
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  margin-top: 1.4rem;
+}
+
+.info_mesa{
+  border-radius: 100%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white-color);
+}
+
+.disponibles{
+ background-color: green;
+}
+.vendidas{
+ background-color: red;
+}
+
+.details{
+  border: 1px solid var(--bg-contrast);
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 2rem;
+
+}
+
+.info_details{
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.element{
+  padding: 1rem;
+  border: 1px solid var(--bg-contrast);
+  font-family: "Poppins", sans-serif;
+  border-radius: 1rem;
+
+}
+
+.element p{
+  font-weight: 600;
+}
+
+.element p span{
+  font-weight: 400;
+}
+
+.info {
+  background-color: var(--grey-color);
+  width: 65%; /* Asegúrate que esto sea igual que el width de .visualizer */
+  border-radius: 1rem;
+  position: relative; /* Mantén el contenedor relativo para que los rectángulos se posicionen dentro */
+  height: 600px; /* Asegúrate de que tenga la misma altura que .visualizer */
+  overflow: hidden; /* Esto es importante para ocultar cualquier desbordamiento */
+}
+
+.rectangle {
+  position: absolute; /* Asegúrate de que esté en relación al contenedor .info */
+  /*background-color: rgba(0, 0, 255, 0.133); /* Color del rectángulo */
+ /* border: 2px solid blue; /* Borde para visualizar */
+  color: white; /* Color del texto dentro del rectángulo */
+  text-align: center; /* Centra el texto */
+  display: flex; /* Flex para centrar texto vertical y horizontalmente */
+  justify-content: center; 
+  align-items: center; 
+}
