@@ -13,3 +13,5 @@ flatpickr("#date_end", {
         console.log("Fecha de fin seleccionada:", dateStr);
     }
 });
+
+console.log("carga correcta de js pickeer") 

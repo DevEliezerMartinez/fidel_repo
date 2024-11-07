@@ -1,61 +1,79 @@
-// Obtener el elemento con el id 'ajustes'
-const ajustesButton = document.getElementById("ajustes");
-const configButton = document.getElementById("config");
-const cerrarSesionButton = document.getElementsByClassName("footer_sidebar")[0];
+document.addEventListener("DOMContentLoaded", function () {
+  // Obtener el elemento con el id 'ajustes' y 'config'
+  const ajustesButton = document.getElementById("ajustes");
+  const configButton = document.getElementById("config");
 
-// Añadir el event listener para detectar clics
-ajustesButton.addEventListener("click", function () {
-  const minimodaloptions =
-    document.getElementsByClassName("options_ajustes")[0];
-
-  // Alternar la clase 'flex' para mostrar u ocultar
-  if (minimodaloptions.classList.contains("flex")) {
-    // Si la clase 'flex' está presente, la eliminamos y volvemos a display: none
-    minimodaloptions.classList.remove("flex");
-    minimodaloptions.style.display = "none";
-  } else {
-    // Si no tiene la clase 'flex', la añadimos y cambiamos a display: flex
-    minimodaloptions.classList.add("flex");
-    minimodaloptions.style.display = "flex";
+  if (!ajustesButton) {
+    console.error("El botón de ajustes no se encontró en el DOM.");
   }
 
-  console.log("Estado de opciones de ajustes actualizado");
-});
-
-cerrarSesionButton.addEventListener("click", function () {
-  localStorage.clear();
-  window.location.href = "rutalogout";
-});
-
-const menu_config = document.getElementsByClassName("options_config")[0];
-configButton.addEventListener("click", function () {
-
-  // Alternar la clase 'flex' para mostrar u ocultar
-  if (menu_config.classList.contains("flex")) {
-    // Si la clase 'flex' está presente, la eliminamos y volvemos a display: none
-    menu_config.classList.remove("flex");
-    menu_config.style.display = "none";
+  if (!configButton) {
+    console.error("El botón de configuración no se encontró en el DOM.");
   } else {
-    // Si no tiene la clase 'flex', la añadimos y cambiamos a display: flex
-    menu_config.classList.add("flex");
-    menu_config.style.display = "flex";
+    console.log("Importación de menú de opciones.");
+
+    // Añadir el event listener para detectar clics en el botón de ajustes
+    ajustesButton.addEventListener("click", function () {
+      const minimodaloptions = document.getElementsByClassName("options_ajustes")[0];
+
+      // Asegúrate de que el elemento con la clase 'options_ajustes' existe
+      if (!minimodaloptions) {
+        console.error("No se encontraron opciones de ajustes.");
+        return;
+      }
+
+      // Alternar la clase 'flex' para mostrar u ocultar
+      if (minimodaloptions.classList.contains("flex")) {
+        // Si la clase 'flex' está presente, la eliminamos y volvemos a display: none
+        minimodaloptions.classList.remove("flex");
+        minimodaloptions.style.display = "none";
+      } else {
+        // Si no tiene la clase 'flex', la añadimos y cambiamos a display: flex
+        minimodaloptions.classList.add("flex");
+        minimodaloptions.style.display = "flex";
+      }
+
+      console.log("Estado de opciones de ajustes actualizado.");
+    });
+
+    // Selecciona el menú de configuración
+    const menu_config = document.getElementsByClassName("options_config")[0];
+
+    if (!menu_config) {
+      console.error("No se encontraron opciones de configuración.");
+    } else {
+      // Añadir el event listener para detectar clics en el botón de configuración
+      configButton.addEventListener("click", function () {
+        console.log("Presionaste el botón de configuración.");
+
+        // Alternar la clase 'flex' para mostrar u ocultar
+        if (menu_config.classList.contains("flex")) {
+          // Si la clase 'flex' está presente, la eliminamos y volvemos a display: none
+          menu_config.classList.remove("flex");
+          menu_config.style.display = "none";
+        } else {
+          // Si no tiene la clase 'flex', la añadimos y cambiamos a display: flex
+          menu_config.classList.add("flex");
+          menu_config.style.display = "flex";
+        }
+      });
+    }
+
+    // Selecciona todos los enlaces que tienen la clase 'botton_option'
+    const opciones = document.querySelectorAll(".botton_option");
+    const inputUbicacion = document.getElementById('ubicacion'); // El input donde se va a escribir el valor
+
+    // Añadimos un evento click a cada opción para obtener el valor de data-ubicacion
+    opciones.forEach((opcion) => {
+      opcion.addEventListener("click", function (event) {
+        // event.preventDefault(); // Previene la acción por defecto del enlace
+        const ubicacion = opcion.getAttribute("data-ubicacion"); // Obtiene el valor de data-ubicacion
+        inputUbicacion.value = ubicacion; // Asigna el valor al input
+
+        // Cierra el menú de configuración al hacer clic en una opción
+        menu_config.classList.remove("flex");
+        menu_config.style.display = "none";
+      });
+    });
   }
-});
-
-// Selecciona todos los enlaces que tienen la clase 'botton_option'
-const opciones = document.querySelectorAll(".botton_option");
-const inputUbicacion = document.getElementById('ubicacion'); // El input donde se va a escribir el valor
-
-
-// Añadimos un evento click a cada opción para obtener el valor de data-ubicacion
-opciones.forEach((opcion) => {
-  opcion.addEventListener("click", function (event) {
-   // event.preventDefault(); // Previene la acción por defecto del enlace
-    const ubicacion = opcion.getAttribute("data-ubicacion"); // Obtiene el valor de data-ubicacion
-    inputUbicacion.value = ubicacion; // Asigna el valor al input
-
-      // Cierra el menú al hacer clic en una opción
-      menu_config.classList.remove("flex");
-      menu_config.style.display = "none";
-  });
 });
