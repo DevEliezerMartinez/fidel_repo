@@ -38,7 +38,7 @@ class RegisteredUserController extends Controller
         // Generar el username (primer letra de nombre + primer letra de apellido)
         $username = strtolower(substr($request->name, 0, 1) . substr($request->lastname, 0, 1));
 
-        $dd
+        
 
         // Crear el usuario con el role_id predeterminado de 1
         $user = User::create([
