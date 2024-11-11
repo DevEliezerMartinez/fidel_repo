@@ -18,6 +18,9 @@
      <link rel="stylesheet" href="{{ asset('assets/css/sidebar.css') }}">  <!-- Ruta completa -->
      <link rel="stylesheet" href="{{ asset('assets/css/global.css') }}">  <!-- Ruta completa -->
      <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">  <!-- Ruta completa -->
+     <link rel="stylesheet" href="{{ asset('assets/css/eventos_Master.css') }}">  <!-- Ruta completa -->
+     <link rel="stylesheet" href="{{ asset('assets/css/detallesEvento.css') }}">  <!-- Ruta completa -->
+
 
    
      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -29,12 +32,7 @@
     <div class="">
         @include('layouts.navigation')
 
-        <!-- Page Heading -->
-        @isset($header)
-        
-        @endisset
-
-        <!-- Page Content -->
+       
         <main>
             {{ $slot }}
         </main>

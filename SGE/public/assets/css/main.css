@@ -180,6 +180,10 @@
     color: var(--primary-color);
 }
 
+.options_config_active{
+   color: var(--primary-color) !important;
+}
+
 #name_event{
     text-decoration: none;
     color: var(--primary-color);

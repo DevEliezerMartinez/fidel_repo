@@ -8,7 +8,6 @@
                 @else
                 <span>?</span> <!-- Si no hay usuario autenticado, mostramos un signo de interrogación -->
                 @endif
-
             </div>
 
             <h2>Reservación de eventos</h2>
@@ -17,24 +16,23 @@
         </div>
 
         <div class="options_sidebar">
-            <button>
-                <img src="assets/img/icons/stats.png" alt="icon">
-                <a class="no_link" href="./panorama_gral.php"> Panorama General</a>
-
+            <button onclick="window.location.href='{{ route('dashboard') }}';">
+                <img src="{{ asset('assets/img/icons/stats.png') }}" alt="icon">
+                <a class="no_link" href="#">Panorama General</a>
             </button>
+
             <button id="ajustes">
-                <img src="assets/img/icons/tools.png" alt="icon">
+                <img src="{{ asset('assets/img/icons/tools.png') }}" alt="icon">
                 Ajustes
             </button>
 
             <div class="options_ajustes">
-                <a href="./adminUsuarios.php" class="botton_option">
+                <a href="{{ url('/adminUsuarios') }}" class="botton_option">
                     Administrador de Usuarios
                 </a>
-                <a href="./adminEventos.php" class="botton_option">
+                <a href="{{ url('/adminEventos') }}" class="botton_option">
                     Administrador de Eventos
                 </a>
-
             </div>
         </div>
 
@@ -45,18 +43,16 @@
             <form method="POST" action="{{ route('logout') }}">
                 @csrf <!-- Token de CSRF para proteger el formulario -->
                 <button type="submit" class="full_center">
-                    <img src="assets/img/icons/logout.png" alt="logout">
+                    <img src="{{ asset('assets/img/icons/logout.png') }}" alt="logout">
                     Cerrar sesión
                 </button>
             </form>
 
             <div class="end_footer full_center">
-                <img src="assets/img/Logos/logo_blanco.png" alt="icon">
+                <img src="{{ asset('assets/img/Logos/logo_blanco.png') }}" alt="icon">
             </div>
         </div>
     </div>
 
-
-
-    <script src="./assets/js/menu_options.js"></script>
-</nav>
+    <script src="{{ asset('assets/js/menu_options.js') }}"></script>
+</sidebar>
