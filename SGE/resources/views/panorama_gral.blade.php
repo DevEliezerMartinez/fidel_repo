@@ -138,5 +138,5 @@
     </script>
 
     <script src="{{ asset('assets/js/datepicker.js') }}"></script>
-    <script src="{{ asset('assets/js/peticiones.js') }}"></script>
+   
 </x-app-layout>

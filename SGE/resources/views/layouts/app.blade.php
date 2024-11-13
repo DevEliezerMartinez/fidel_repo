@@ -11,32 +11,27 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite([ 'resources/js/app.js'])
 
-     <!-- Agregar tus hojas de estilo -->
+    <link rel="stylesheet" href="{{ asset('assets/css/sidebar.css') }}"> <!-- Ruta completa -->
+    <link rel="stylesheet" href="{{ asset('assets/css/global.css') }}"> <!-- Ruta completa -->
+    <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}"> <!-- Ruta completa -->
+    <link rel="stylesheet" href="{{ asset('assets/css/eventos_Master.css') }}"> <!-- Ruta completa -->
+    <link rel="stylesheet" href="{{ asset('assets/css/detallesEvento.css') }}"> <!-- Ruta completa -->
 
-     <link rel="stylesheet" href="{{ asset('assets/css/sidebar.css') }}">  <!-- Ruta completa -->
-     <link rel="stylesheet" href="{{ asset('assets/css/global.css') }}">  <!-- Ruta completa -->
-     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">  <!-- Ruta completa -->
-     <link rel="stylesheet" href="{{ asset('assets/css/eventos_Master.css') }}">  <!-- Ruta completa -->
-     <link rel="stylesheet" href="{{ asset('assets/css/detallesEvento.css') }}">  <!-- Ruta completa -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-
-   
-     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-   
 </head>
 
 <body class="">
-    <div class="">
-        @include('layouts.navigation')
 
-       
-        <main>
-            {{ $slot }}
-        </main>
-    </div>
+    @include('layouts.navigation')
+
+    <main>
+        {{ $slot }}
+    </main>
+
 </body>
 
 </html>

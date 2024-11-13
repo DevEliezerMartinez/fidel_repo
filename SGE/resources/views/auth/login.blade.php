@@ -33,7 +33,7 @@
                 </div>
 
                 <!-- Forgot password link -->
-                <div class="flex items-center justify-end mt-4">
+                <div class="">
                     @if (Route::has('password.request'))
                     <a href="{{ route('password.request') }}">
                         {{ __('¿Olvidaste tu contraseña?') }}
@@ -41,7 +41,7 @@
                     @endif
 
                     <!-- Botón de Login -->
-                    <button type="submit">
+                    <button class="login-btn" type="submit">
                         {{ __('Iniciar sesión') }}
                     </button>
                 </div>

@@ -43,7 +43,6 @@ align-items: center;
     padding: 40px;
     width: 350px;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
    
 }
 .login-container img {
@@ -79,7 +78,8 @@ align-items: center;
 }
 .password-group {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+
     position: relative;
 }
 .password-group input {

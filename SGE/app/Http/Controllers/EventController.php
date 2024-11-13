@@ -55,4 +55,16 @@ class EventController extends Controller
         // Retornar la vista con los detalles del evento
         return view('detallesEvento', compact('event'));
     }
+
+
+    public function sh1() {
+        return view('adminUsuarios');
+    }
+
+    public function sh2() {
+        return view('adminEventos');
+    }
+
+
+
 }

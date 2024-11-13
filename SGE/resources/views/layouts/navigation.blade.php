@@ -1,4 +1,4 @@
-<sidebar x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<sidebar x-data="{ open: false }" class="">
     <div class="sidebar">
 
         <div class="header_sidebar full_center">
@@ -27,13 +27,14 @@
             </button>
 
             <div class="options_ajustes">
-                <a href="{{ url('/adminUsuarios') }}" class="botton_option">
+                <a href="{{ route('adminUsuarios') }}" class="botton_option">
                     Administrador de Usuarios
                 </a>
-                <a href="{{ url('/adminEventos') }}" class="botton_option">
+                <a href="{{ route('adminEventos') }}" class="botton_option">
                     Administrador de Eventos
                 </a>
             </div>
+
         </div>
 
         <!-- div para dar espaciado necesario -->
