@@ -36,7 +36,7 @@
                         value="{{ request('date_end') }}">
                 </div>
                 <div class="options filter">
-                    <button type="submit">Filtrar</button>
+                    <button class="filter_dates" type="submit">Filtrar</button>
                 </div>
             </div>
             <input type="hidden" name="ubicacion" id="ubicacion" value="{{ request('ubicacion', 'Todos') }}">

@@ -15,7 +15,10 @@
   justify-content: flex-end;
   gap: 1rem;
 }
-
+.filter_dates{
+  border: none;
+  background-color: transparent;
+}
 .options {
   border: 1px solid;
   border-radius: 1rem;

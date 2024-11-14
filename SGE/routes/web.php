@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Ruta principal para redirigir al login si no está autenticado
@@ -23,8 +24,24 @@ Route::get('/adminEventos', [EventController::class, 'sh2'])->middleware(['auth'
 // Ruta para mostrar los detalles de un evento específico
 Route::get('/detallesEvento/{id}', [EventController::class, 'show'])->middleware(['auth'])->name('detallesEvento');
 
+Route::get('/events/{eventId}', [EventController::class, 'showDetalles']);
+
 // Ruta para administración de usuarios (método en AdminController)
 Route::get('/usuarios', [AdminController::class, 'usuarios'])->name('usuarios');
+
+Route::post('/usuarios/crear', [UserController::class, 'store'])->name('usuarios.store');
+
+// Ruta para mostrar el formulario de edición (retorna los datos del usuario en formato JSON)
+Route::get('/usuarios/{user}/edit', [UserController::class, 'editJson'])->name('usuarios.edit');
+
+// Ruta para actualizar el usuario
+Route::put('/usuarios/{user}', [UserController::class, 'update'])->name('usuarios.update');
+
+Route::delete('/usuarios/{id}', [UserController::class, 'destroy'])->name('usuarios.destroy');
+
+Route::delete('/events/{id}', [EventController::class, 'destroy'])->name('events.destroy');
+
+Route::post('/events', [EventController::class, 'store'])->name('events.store');
 
 // Rutas para el perfil
 Route::middleware('auth')->group(function () {

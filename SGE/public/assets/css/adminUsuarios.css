@@ -76,14 +76,14 @@ th, td {
     margin-bottom: 2rem;
 }
 
-#addUserForm{
+#userForm{
     display: flex;
     flex-direction: column;
 
 }
 
 /* Estilos para los inputs del formulario */
-#addUserForm input {
+#userForm input {
     border: none; /* Sin borde en los lados y en la parte superior */
     border-bottom: 1px solid #888; /* Borde inferior */
     padding: 8px; /* Espaciado interno */
@@ -93,7 +93,7 @@ th, td {
 }
 
 /* Cambiar el color del borde inferior al enfocar el input */
-#addUserForm input:focus {
+#userForm input:focus {
     border-bottom: 2px solid var(--primary-color); /* Color de borde inferior al enfocarse */
 }
 

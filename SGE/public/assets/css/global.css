@@ -44,7 +44,7 @@ main{
 @media only screen and (max-width: 600px) {
     main {
       margin-left: 0%;
-    }
+    }   
   }
 
 
@@ -55,6 +55,9 @@ main{
 
 }
 
+.hidden_element{
+    display: none !important;
+}
 
 .submitPrincipal{
     background-color: var(--blue-color);

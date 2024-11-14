@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}"> <!-- Ruta completa -->
     <link rel="stylesheet" href="{{ asset('assets/css/eventos_Master.css') }}"> <!-- Ruta completa -->
     <link rel="stylesheet" href="{{ asset('assets/css/detallesEvento.css') }}"> <!-- Ruta completa -->
+    <link rel="stylesheet" href="{{ asset('assets/css/adminUsuarios.css') }}"> <!-- Ruta completa -->
+    <link rel="stylesheet" href="{{ asset('assets/css/adminEventos.css') }}"> <!-- Ruta completa -->
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
