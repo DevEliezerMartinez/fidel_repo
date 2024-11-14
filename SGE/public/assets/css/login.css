@@ -23,11 +23,8 @@
   font-family: "Poppins", sans-serif;
 }
 
-.main_login a {
-    color: var(--white-color);
-   align-self: safe;
-    
-}
+  
+
 footer{
 background-color: var(--blue-color);
 height: 20vh;
@@ -43,6 +40,9 @@ align-items: center;
     padding: 40px;
     width: 350px;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center ;
    
 }
 .login-container img {
@@ -85,9 +85,14 @@ align-items: center;
 .password-group input {
     flex: 1;
 }
-.password-group .toggle-password {
+.options_login a{
+color: var(--blue-color);
+}
+
+.toggle-password {
     position: absolute;
     right: 10px;
+    top: 30px;
     cursor: pointer;
 }
 .login-btn {
@@ -99,6 +104,7 @@ align-items: center;
     width: 100%;
     font-size: 16px;
     cursor: pointer;
+    margin: 1.3rem 0rem;
 }
 .login-btn:hover {
     background-color: #092034;

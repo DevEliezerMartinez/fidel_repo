@@ -12,14 +12,16 @@
                 <!-- Email Address -->
                 <div class="form-group">
                     <label for="email">{{ __('Usuario o correo electrónico') }}</label>
-                    <x-text-input id="email" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="Ingrese su usuario o correo electrónico" />
+                    <x-text-input id="email" type="email" name="email" :value="old('email')" required autofocus
+                        autocomplete="username" placeholder="Ingrese su usuario o correo electrónico" />
                     <x-input-error :messages="$errors->get('email')" />
                 </div>
 
                 <!-- Password -->
                 <div class="form-group password-group mt-4">
                     <label for="password">{{ __('Contraseña') }}</label>
-                    <x-text-input id="password" type="password" name="password" required autocomplete="current-password" placeholder="Ingrese su contraseña" />
+                    <x-text-input id="password" type="password" name="password" required
+                        autocomplete="current-password" placeholder="Ingrese su contraseña" />
                     <span class="toggle-password" onclick="togglePassword()">👁️</span>
                     <x-input-error :messages="$errors->get('password')" />
                 </div>
@@ -33,11 +35,11 @@
                 </div>
 
                 <!-- Forgot password link -->
-                <div class="">
+                <div class="options_login">
                     @if (Route::has('password.request'))
-                    <a href="{{ route('password.request') }}">
-                        {{ __('¿Olvidaste tu contraseña?') }}
-                    </a>
+                        <a href="{{ route('password.request') }}">
+                            {{ __('¿Olvidaste tu contraseña?') }}
+                        </a>
                     @endif
 
                     <!-- Botón de Login -->
@@ -46,12 +48,19 @@
                     </button>
                 </div>
             </form>
+
+
+           <div class="final_optionsLogin">
+            <span>{{ __('¿No tienes una cuenta  ?') }}</span>
+            <a href="{{ route('register') }}" class="ml-2 text-sm text-blue-600 underline hover:text-blue-800">
+                {{ __('Registrate') }}
+            </a>
+           </div>
+
+
         </div>
 
-        <span>{{ __('¿No tienes una cuenta  ?') }}</span>
-        <a href="{{ route('register') }}" class="ml-2 text-sm text-blue-600 underline hover:text-blue-800">
-            {{ __('Registrate') }}
-        </a>
+
     </div>
 
     <footer>
