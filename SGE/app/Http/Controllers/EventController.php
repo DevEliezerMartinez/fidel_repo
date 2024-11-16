@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\EventLayout;
 use App\Models\Location;
 use App\Models\Space;
 use App\Models\User;
@@ -64,12 +65,16 @@ class EventController extends Controller
 
     public function show($id)
     {
-        // Buscar el evento por su ID
+        // Buscar el evento por su ID con relaciones necesarias
         $event = Event::with('space.location')->findOrFail($id);
 
-        // Retornar la vista con los detalles del evento
-        return view('detallesEvento', compact('event'));
+        // Verificar si el evento tiene un layout asociado
+        $layout = EventLayout::where('event_id', $id)->first();
+
+        // Pasar los datos del evento y layout a la vista
+        return view('detallesEvento', compact('event', 'layout'));
     }
+
 
 
 
@@ -122,6 +127,16 @@ class EventController extends Controller
         }
     }
 
+    public function eventosMaster($id)
+    {
+        $event = Event::with('space')->findOrFail($id); // Traer el evento con su espacio relacionado
+        $spaces = Space::all(); // Recuperar todos los espacios
+        return view('eventosMaster', compact('event', 'spaces')); // Pasar tanto el evento como los espacios a la vista
+    }
+
+
+
+
 
     // EventController.php
     public function store(Request $request)
@@ -158,6 +173,74 @@ class EventController extends Controller
         } catch (\Exception $e) {
             // Captura otros errores y envía el mensaje completo
             return response()->json(['error' => 'Error inesperado', 'details' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateInfo(Request $request, $eventId)
+    {
+        // Validación de los datos recibidos
+        $validatedData = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'required|string|max:255',
+            'fecha' => 'required|date',
+            'capacidad' => 'required|integer|min:1',
+            'lugar' => 'required|exists:spaces,id', // Validar que el lugar exista en la tabla 'spaces'
+            'configuraciones' => 'required|array', // Validar que la configuración sea un array
+        ]);
+
+        try {
+            // Buscar el evento por su ID
+            $event = Event::findOrFail($eventId);
+
+            // Actualizar los datos del evento
+            $event->name = $validatedData['nombre'];
+            $event->event_date = $validatedData['fecha'];
+            $event->descripcion = $validatedData['descripcion'];
+            $event->capacity = $validatedData['capacidad'];
+            $event->space_id = $validatedData['lugar'];
+
+            // Guardar los cambios en la base de datos
+            $event->save();
+
+            // Guardar la configuración en la tabla event_layouts
+            $layoutData = [
+                'event_id' => $event->id,
+                'layout_json' => json_encode($validatedData['configuraciones']),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+
+            // Insertar o actualizar la configuración en event_layouts
+            EventLayout::updateOrCreate(
+                ['event_id' => $event->id],
+                $layoutData
+            );
+
+            return response()->json([
+                'success' => 'Evento actualizado exitosamente y configuración guardada',
+            ], 200);
+        } catch (\Exception $e) {
+            // Manejo de errores
+            return response()->json([
+                'error' => 'Error al actualizar el evento',
+                'details' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function toggleStatus(Request $request, Event $event)
+    {
+        $validated = $request->validate([
+            'status' => 'required|boolean',
+        ]);
+
+        try {
+            $event->status = $validated['status'];
+            $event->save();
+
+            return response()->json(['success' => 'Estado del evento actualizado correctamente.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'No se pudo actualizar el estado del evento.'], 500);
         }
     }
 }

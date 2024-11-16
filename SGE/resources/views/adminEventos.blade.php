@@ -45,11 +45,14 @@
                     @forelse ($events as $event)
                     <tr>
                         <td>{{ $event->name }}</td>
-                        <td>{{ $event->event_date }}</td>
+                        <td>{{ \Carbon\Carbon::parse($event->event_date)->locale('es')->translatedFormat('d F Y') }}</td>
                         <td>{{ $event->space->location->name ?? 'Sin ubicación' }}</td>
                         <td>
                             <label class="switch">
-                                <input type="checkbox" id="eventSwitch_{{ $event->id }}" onchange="toggleEventStatus({{ $event->id }}, this.checked)">
+                                <input type="checkbox" id="eventSwitch_{{ $event->id }}"
+                                    onchange="toggleEventStatus({{ $event->id }}, this.checked)"
+                                    {{ $event->status ? 'checked' : '' }}>
+
                                 <span class="slider round"></span>
                             </label>
                             <img src="{{ asset('assets/img/icons/edit.png') }}" alt="Editar" class="icon" title="Editar" onclick="editEvent({{ $event->id }})">
@@ -135,37 +138,17 @@
 
         // Mostrar el modal al hacer clic en el botón de agregar
         addEventButton.addEventListener('click', function() {
-            editEventId = null; // Resetear el ID de edición al abrir el modal para crear un evento
-            document.getElementById('addEventForm').reset(); // Limpiar el formulario
-            document.querySelector('.submit_button').textContent = "Agregar Evento"; // Cambiar texto del botón
+            editEventId = null; // No se está editando ningún evento
+            document.getElementById('eventForm').reset(); // Limpiar el formulario
+            document.getElementById('modalTitle').textContent = "Registro de Evento"; // Cambiar título del modal
+            document.getElementById('submitButton').textContent = "Agregar Evento"; // Cambiar texto del botón
             modal.style.display = 'block';
         });
 
-        // Mostrar el modal para editar el evento
+        // Redirigir a la vista eventos_master al hacer clic en editar
         function editEvent(eventId) {
-            editEventId = eventId;
-            fetch(`/events/${eventId}`) // Esta ruta debe ser correcta
-                .then(response => response.json())
-                .then(data => {
-                    if (data.event) {
-                        const event = data.event;
-                        document.getElementById('nombre').value = event.name;
-                        // Asegúrate de que la fecha esté en el formato correcto 'YYYY-MM-DD'
-                        const eventDate = new Date(event.event_date);
-                        const formattedDate = eventDate.toISOString().split('T')[0]; // Obtiene la fecha en formato 'YYYY-MM-DD'
-                        document.getElementById('fecha').value = formattedDate;
-                        document.getElementById('capacidad').value = event.capacity;
-                        document.getElementById('lugar').value = event.space_id;
-                        document.querySelector('.submit_button').textContent = "Actualizar Evento"; // Cambiar texto del botón
-                        modal.style.display = 'block';
-                    } else {
-                        alert("No se pudo cargar el evento para editar.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    alert("Ocurrió un error al cargar el evento.");
-                });
+            const url = `/eventos_master/${eventId}`; // Ajusta la ruta según tu configuración
+            window.location.href = url; // Redirigir a la nueva vista con el ID del evento
         }
 
 
@@ -183,7 +166,8 @@
         });
 
         // Manejo del formulario de agregar/editar evento
-        document.getElementById('addEventForm').addEventListener('submit', function(event) {
+        document.getElementById('eventForm').addEventListener('submit', function(event) {
+
             event.preventDefault();
 
             const nombre = document.getElementById('nombre').value;
@@ -228,6 +212,34 @@
 
             modal.style.display = 'none';
         });
+
+
+        function toggleEventStatus(eventId, status) {
+            const isActive = status ? true : false; // Convertir a true o false explícitamente
+
+            fetch(`/events/${eventId}/toggle-status`, {
+                    method: 'PUT',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        status: isActive
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log(data.success);
+                    } else {
+                        alert(data.error || "Error al actualizar el estado del evento.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Ocurrió un error al cambiar el estado del evento.");
+                });
+        }
     </script>
 
 

@@ -16,6 +16,7 @@ class Event extends Model
     protected $fillable = [
         'space_id',
         'name',
+        'descripcion',
         'event_date',
         'capacity',
         'remaining_capacity',

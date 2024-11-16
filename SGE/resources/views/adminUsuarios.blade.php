@@ -71,7 +71,7 @@
                     <option value="1">Usuario</option>
                 </select>
 
-                <button type="submit" id="submitButton">Registrar Usuario</button>
+                <button class="submit_button" type="submit" id="submitButton">Registrar Usuario</button>
             </form>
         </div>
     </div>

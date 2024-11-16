@@ -67,3 +67,8 @@ main{
     border: none;
     margin: 1rem;
 }
+
+.vertical{
+    display: flex;
+    flex-direction: column;
+}

@@ -25,6 +25,7 @@ Route::get('/adminEventos', [EventController::class, 'sh2'])->middleware(['auth'
 Route::get('/detallesEvento/{id}', [EventController::class, 'show'])->middleware(['auth'])->name('detallesEvento');
 
 Route::get('/events/{eventId}', [EventController::class, 'showDetalles']);
+Route::put('/events/{eventId}', [EventController::class, 'updateInfo'])->name('events.update');
 
 // Ruta para administración de usuarios (método en AdminController)
 Route::get('/usuarios', [AdminController::class, 'usuarios'])->name('usuarios');
@@ -34,6 +35,9 @@ Route::post('/usuarios/crear', [UserController::class, 'store'])->name('usuarios
 // Ruta para mostrar el formulario de edición (retorna los datos del usuario en formato JSON)
 Route::get('/usuarios/{user}/edit', [UserController::class, 'editJson'])->name('usuarios.edit');
 
+Route::get('/eventos_master/{id}', [EventController::class, 'eventosMaster'])->name('eventos.master');
+
+
 // Ruta para actualizar el usuario
 Route::put('/usuarios/{user}', [UserController::class, 'update'])->name('usuarios.update');
 
@@ -42,6 +46,9 @@ Route::delete('/usuarios/{id}', [UserController::class, 'destroy'])->name('usuar
 Route::delete('/events/{id}', [EventController::class, 'destroy'])->name('events.destroy');
 
 Route::post('/events', [EventController::class, 'store'])->name('events.store');
+
+Route::put('/events/{event}/toggle-status', [EventController::class, 'toggleStatus']);
+
 
 // Rutas para el perfil
 Route::middleware('auth')->group(function () {
