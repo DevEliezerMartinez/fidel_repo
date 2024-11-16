@@ -20,18 +20,19 @@
                 <tbody>
                     <!-- Recorrer los usuarios dinámicamente -->
                     @foreach ($users as $user)
-                    <tr>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td> <!-- Aquí usas el campo "correo" que agregaste -->
-                        <td>{{ $user->puesto ?: 'Sin asignar' }}</td>
+                        <tr>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td> <!-- Aquí usas el campo "correo" que agregaste -->
+                            <td>{{ $user->puesto ?: 'Sin asignar' }}</td>
 
-                        <td>
-                            <a href="#" onclick="editUser({{ $user->id }})">
-                                <img src="./assets/img/icons/edit.png" alt="Editar" class="icon" title="Editar">
-                            </a>
-                            <img src="./assets/img/icons/delete.png" alt="Eliminar" class="icon" title="Eliminar" onclick="deleteUser({{ $user->id }})">
-                        </td>
-                    </tr>
+                            <td>
+                                <a href="#" onclick="editUser({{ $user->id }})">
+                                    <img src="./assets/img/icons/edit.png" alt="Editar" class="icon" title="Editar">
+                                </a>
+                                <img src="./assets/img/icons/delete.png" alt="Eliminar" class="icon" title="Eliminar"
+                                    onclick="deleteUser({{ $user->id }})">
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -46,9 +47,11 @@
                 <h2 id="modalTitle">Registro de Usuario</h2>
                 <span class="close">&times;</span>
             </div>
-            <form id="userForm" action="{{ route('usuarios.store') }}" method="POST">
-                @csrf <!-- Para proteger contra CSRF -->
-                <label for="nombre">Nombre de anfitrión:</label>
+            <form id="userForm" method="POST">
+                @csrf
+                <input type="hidden" name="_method" id="formMethod" value="POST">
+
+                <label for="nombre">Nombre:</label>
                 <input type="text" id="nombre" name="nombre" required>
 
                 <label for="apellido">Apellido:</label>
@@ -68,57 +71,55 @@
                     <option value="1">Usuario</option>
                 </select>
 
-                <button class="submit_button" type="submit" id="submitButton">Agregar Usuario</button>
+                <button type="submit" id="submitButton">Registrar Usuario</button>
             </form>
         </div>
     </div>
 
+
     <script>
         // Función para editar un usuario
         function editUser(userId) {
-            // Hacer una solicitud GET para obtener los datos del usuario
             fetch(`/usuarios/${userId}/edit`)
                 .then(response => response.json())
                 .then(data => {
-                    // Prellenar el formulario del modal con los datos del usuario
+                    // Prellenar el formulario
                     document.getElementById('nombre').value = data.nombre;
                     document.getElementById('apellido').value = data.apellido;
                     document.getElementById('correo').value = data.correo;
                     document.getElementById('puesto').value = data.puesto;
                     document.getElementById('permisos').value = data.permisos;
 
-                    // Cambiar el título del modal y la acción del formulario para que apunte a la ruta de actualización
-                    document.getElementById('modalTitle').innerText = "Editar Usuario";
+                    // Configurar el formulario para editar
+                    document.getElementById('formMethod').value = "PUT";
                     document.getElementById('userForm').action = `/usuarios/${userId}`;
+                    document.getElementById('modalTitle').innerText = "Editar Usuario";
                     document.getElementById('submitButton').innerText = "Actualizar Usuario";
 
-                    // Mostrar el modal
-                    document.getElementById('userModal').style.display = "block";
-                })
-                .catch(error => {
-                    console.error('Error:', error);
+                    document.getElementById('userModal').style.display = 'block';
                 });
         }
+
 
         // Función para eliminar un usuario
         function deleteUser(userId) {
             if (confirm('¿Seguro que deseas eliminar este usuario?')) {
                 fetch(`/usuarios/${userId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Usuario eliminado');
-                        location.reload(); // Recargar la página después de eliminar
-                    } else {
-                        alert('Error al eliminar el usuario');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Usuario eliminado');
+                            location.reload(); // Recargar la página después de eliminar
+                        } else {
+                            alert('Error al eliminar el usuario');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
             }
         }
 
@@ -132,14 +133,19 @@
         const spanClose = document.getElementsByClassName('close')[0];
 
         // Cuando el usuario hace clic en el botón, abrir el modal 
+        // Abrir modal para crear usuario
+        // Evento para abrir modal al crear usuario
         addUserButton.addEventListener('click', function() {
-            // Limpiar el formulario antes de abrir
-            document.getElementById('userForm').reset();
-            document.getElementById('modalTitle').innerText = "Registro de Usuario";
-            document.getElementById('submitButton').innerText = "Agregar Usuario";
-            document.getElementById('userForm').action = "{{ route('usuarios.store') }}";
-            modal.style.display = 'block';
+            document.getElementById('userForm').reset(); // Limpiar el formulario
+            document.getElementById('formMethod').value = "POST"; // Configurar método POST
+            document.getElementById('userForm').action =
+                "{{ route('usuarios.store') }}"; // Configurar la ruta para crear
+            document.getElementById('modalTitle').innerText = "Registrar Usuario"; // Título del modal
+            document.getElementById('submitButton').innerText = "Registrar Usuario"; // Botón de enviar
+
+            document.getElementById('userModal').style.display = 'block'; // Mostrar el modal
         });
+
 
         // Cuando el usuario hace clic en <span> (x), cerrar el modal
         spanClose.addEventListener('click', function() {
@@ -154,6 +160,6 @@
         });
     </script>
 
-    
+
 
 </x-app-layout>
