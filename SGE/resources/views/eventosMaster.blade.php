@@ -110,6 +110,11 @@
                 <input type="number" name="precioMenor" id="precioMenor">
             </div>
 
+            <div class="precios">
+                <span>Precio silla infantes $</span>
+                <input type="number" name="precioinfantes" id="precioInfantes">
+            </div>
+
 
             <input class="submitPrincipal" id="save" type="submit" value="Guardar cambios">
 
@@ -127,7 +132,14 @@
         function sendDataToServer(eventId) {
             // Recopilar los datos del formulario principal
             const nombre = document.getElementById('nombre').value;
-            const descripcion = document.getElementById('descripcion').value;
+            const descripcion = document.getElementById('descripcion').value.trim();
+            // Verifica si está vacío o tiene solo espacios en blanco
+            if (descripcion === "") {
+                // Asignar un espacio en blanco explícito
+                const valorEnviar = " ";
+                console.log("Se enviará un espacio en blanco:", valorEnviar);
+            } else {
+            }
             const fechaInicio = document.getElementById('date_start').value;
             const espacio = document.getElementById('Lugar').value;
 
@@ -139,6 +151,7 @@
             const mesasCantidad = document.getElementById('mesasCantidad').value;
             const sillasxmesa = document.getElementById('sillasxmesa').value;
             const precioAdulto = document.getElementById('precioAdulto').value;
+            const precioInfante = document.getElementById('precioInfantes').value;
             const precioMenor = document.getElementById('precioMenor').value;
 
             // Calcular la capacidad como la multiplicación de mesasCantidad y sillasxmesa
@@ -183,13 +196,14 @@
                 capacidad: capacidad, // Incluir la capacidad calculada
                 precioAdulto: precioAdulto,
                 precioMenor: precioMenor,
+                precioInfante: precioInfante,
                 configuraciones: jsonConfig // Guardar la configuración directamente
             };
 
             // Enviar los datos al servidor utilizando AJAX con axios
             axios.put(`/events/${eventId}`, data)
                 .then(response => {
-                    console.log("datso env",data)
+                    console.log("datso env", data)
                     console.log('Datos guardados exitosamente', response);
                     window.location.href = `/detallesEvento/${eventId}`; // Redirigir a detalles del evento
                 })
@@ -333,8 +347,6 @@
                 visualizer.appendChild(cell);
             }
         }
-
-      
     </script>
 
 

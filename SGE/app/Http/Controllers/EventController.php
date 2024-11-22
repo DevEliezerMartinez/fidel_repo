@@ -186,11 +186,19 @@ class EventController extends Controller
     }
 
     public function eventosMaster($id)
-    {
-        $event = Event::with('space')->findOrFail($id); // Traer el evento con su espacio relacionado
-        $spaces = Space::all(); // Recuperar todos los espacios
-        return view('eventosMaster', compact('event', 'spaces')); // Pasar tanto el evento como los espacios a la vista
+{
+    $event = Event::with('space', 'layout')->findOrFail($id); // Incluye 'layout' en las relaciones cargadas
+
+    // Verifica si el evento ya tiene un layout
+    if ($event->layout) {
+        // Redirige a /detallesEvento/{id}
+        return redirect()->route('detallesEvento', ['id' => $id]);
     }
+
+    $spaces = Space::all(); // Recuperar todos los espacios
+    return view('eventosMaster', compact('event', 'spaces')); // Pasar tanto el evento como los espacios a la vista
+}
+
 
 
 
@@ -246,6 +254,9 @@ class EventController extends Controller
             'configuraciones' => 'required',
             'mesasCantidad' => 'required|integer|min:1',
             'sillasxmesa' => 'required|integer|min:1',
+            'precioInfante' => 'required|integer',
+            'precioAdulto' => 'required|integer',
+            'precioMenor' => 'required|integer',
         ]);
 
         try {
@@ -258,6 +269,10 @@ class EventController extends Controller
             $event->descripcion = $validatedData['descripcion'];
             $event->capacity = $validatedData['capacidad'];
             $event->space_id = $validatedData['lugar'];
+
+            $event->precioInfante = $validatedData['precioInfante'];
+            $event->precioAdulto = $validatedData['precioAdulto'];
+            $event->precioMenor = $validatedData['precioMenor'];
 
             // Guardar los cambios del evento
             $event->save();

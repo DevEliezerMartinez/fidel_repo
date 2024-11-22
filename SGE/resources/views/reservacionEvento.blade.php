@@ -156,6 +156,8 @@
                 const adultos = parseInt(document.getElementById('adultos').value) || 0;
                 const infantes = parseInt(document.getElementById('infantes').value) || 0;
                 const menores = parseInt(document.getElementById('menores').value) || 0;
+                const name = document.getElementById('name').value;
+                const fechaReservacion = parseIntdocument.getElementById('fechaReservacion').value;
 
                 // Sumar los valores
                 const sumaPersonas = adultos + infantes + menores;
@@ -167,8 +169,38 @@
                 if (sumaPersonas === asientos) {
                     // Si coinciden, proceder con la acción (enviar formulario o lo que desees)
                     alert("La cantidad de personas coincide con los asientos disponibles.");
-                    // Aquí puedes enviar el formulario o realizar otra acción
-                    // Ejemplo: document.forms[0].submit(); 
+
+                    // Crear un objeto con los datos a enviar
+                    const reservaData = {
+                        name: name,
+                        fechaReservacion: fechaReservacion,
+                        adultos: adultos,
+                        infantes: infantes,
+                        menores: menores,
+                        asientos: asientos
+                    };
+
+                    // Enviar los datos al endpoint con fetch
+                    fetch('https://tu-endpoint.com/reservar', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(reservaData) // Convierte los datos a formato JSON
+                        })
+                        .then(response => response.json()) // Si la respuesta es JSON, la parsea
+                        .then(data => {
+                            if (data.success) {
+                                alert("Reserva realizada con éxito.");
+                            } else {
+                                alert("Hubo un error al realizar la reserva.");
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al enviar la reserva:', error);
+                            alert("Hubo un error al enviar los datos.");
+                        });
+
                 } else {
                     // Si no coinciden, mostrar un mensaje de error
                     alert("La suma de Adultos, Infantes y Menores debe ser igual al número de asientos.");
