@@ -166,7 +166,7 @@
 
     <script>
         // Inicializa el tiempo en segundos (5 minutos)
-        let totalSeconds = 5 * 60;
+        let totalSeconds = 1 * 60;
 
         // Función para actualizar el temporizador
         function updateTimer() {
@@ -188,87 +188,130 @@
             if (totalSeconds < 0) {
                 clearInterval(timerInterval);
                 document.getElementById('timer').textContent = "¡Tiempo terminado!";
+
+                // Deshabilitar el botón de reserva para evitar envío
+                const reservaButton = document.getElementById('reserva');
+                reservaButton.disabled = true;
+
+                // Mostrar mensaje de tiempo agotado
+                alert("El tiempo ha expirado. Ya no puedes realizar la reserva.");
             }
         }
 
         // Llama a la función cada segundo
         const timerInterval = setInterval(updateTimer, 1000);
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Añadir el EventListener al botón de reserva
+            const reservaButton = document.getElementById('reserva');
+            reservaButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevenir el envío si no coi
+                // Verificar si el tiempo ha terminado antes de enviar el formulario
+                if (totalSeconds < 0) {
+                    event.preventDefault(); // Prevenir el envío si el tiempo está agotado
+                    alert("Tiempo agotado. No puedes realizar la reserva.");
+                    return; // Evita que el código continúe si el tiempo está agotado
+                }
+
+                // Obtener los valores de los inputs de adultos, infantes y menores
+                const adultos = parseInt(document.getElementById('adultos').value) || 0;
+                const infantes = parseInt(document.getElementById('infantes').value) || 0;
+                const menores = parseInt(document.getElementById('menores').value) || 0;
+
+                // Sumar los valores
+                const sumaPersonas = adultos + infantes + menores;
+
+                // Obtener el valor de los asientos
+                const asientos = parseInt(document.getElementById('asientos').value);
+
+                // Comprobar si la suma es igual al número de asientos
+                if (sumaPersonas === asientos) {
+                    // Si coinciden, proceder con la acción (enviar formulario o lo que desees)
+                    alert("La cantidad de personas coincide con los asientos disponibles.");
+                    // Aquí puedes enviar el formulario o realizar otra acción
+                    // Ejemplo: document.forms[0].submit(); 
+                } else {
+                    // Si no coinciden, mostrar un mensaje de error
+                    alert("La suma de Adultos, Infantes y Menores debe ser igual al número de asientos.");
+                }
+            });
+        });
     </script>
+
 
     <script>
         render()
         document.getElementById("fechaReservacion").value = new Date().toISOString().split('T')[0];
 
         function render() {
-    // Número de sillas a generar (puedes cambiar este valor)
-    let cantidad_s = document.getElementById("sillasNumber").value
-    console.log(cantidad_s);
-    const numberOfSilladetails = cantidad_s; // Cambia este número según sea necesario
+            // Número de sillas a generar (puedes cambiar este valor)
+            let cantidad_s = document.getElementById("sillasNumber").value
+            console.log(cantidad_s);
+            const numberOfSilladetails = cantidad_s; // Cambia este número según sea necesario
 
-    // Obtiene el contenedor de detalles
-    const detailsMesa = document.querySelector('.detailsMesa');
+            // Obtiene el contenedor de detalles
+            const detailsMesa = document.querySelector('.detailsMesa');
 
-    // Calcula el radio del círculo alrededor del mainMesa
-    const mainMesaSize = 300; // Tamaño de mainMesa (diámetro)
-    const radius = (mainMesaSize / 2) + 70; // Radio para silladetail (puedes ajustar la distancia)
+            // Calcula el radio del círculo alrededor del mainMesa
+            const mainMesaSize = 300; // Tamaño de mainMesa (diámetro)
+            const radius = (mainMesaSize / 2) + 70; // Radio para silladetail (puedes ajustar la distancia)
 
-    // Centro de mainMesa
-    const centerX = detailsMesa.offsetWidth / 2; // Centro del contenedor
-    const centerY = detailsMesa.offsetHeight / 2; // Centro del contenedor
+            // Centro de mainMesa
+            const centerX = detailsMesa.offsetWidth / 2; // Centro del contenedor
+            const centerY = detailsMesa.offsetHeight / 2; // Centro del contenedor
 
-    // Obtiene el campo de entrada numérico de asientos
-    const asientosInput = document.getElementById('asientosSeleccionados');
+            // Obtiene el campo de entrada numérico de asientos
+            const asientosInput = document.getElementById('asientosSeleccionados');
 
-    // Inicializa el contador de asientos seleccionados
-    let asientosContador = 0;
+            // Inicializa el contador de asientos seleccionados
+            let asientosContador = 0;
 
-    for (let i = 0; i < numberOfSilladetails; i++) {
-        // Crea un nuevo div para silladetail
-        const silladetail = document.createElement('div');
-        silladetail.className = 'silladetail';
-        silladetail.textContent = i + 1; // Añade el número progresivo
+            for (let i = 0; i < numberOfSilladetails; i++) {
+                // Crea un nuevo div para silladetail
+                const silladetail = document.createElement('div');
+                silladetail.className = 'silladetail';
+                silladetail.textContent = i + 1; // Añade el número progresivo
 
-        // Asigna un ID único al silladetail
-        silladetail.id = `silladetail-${i + 1}`; // Por ejemplo: silladetail-1, silladetail-2, etc.
+                // Asigna un ID único al silladetail
+                silladetail.id = `silladetail-${i + 1}`; // Por ejemplo: silladetail-1, silladetail-2, etc.
 
-        // Calcula la posición de cada silladetail
-        const angle = (i / numberOfSilladetails) * (2 * Math.PI); // Convierte a radianes
-        const x = radius * Math.cos(angle) + centerX - 15; // Ajusta para centrar (15 es la mitad del ancho de silladetail)
-        const y = radius * Math.sin(angle) + centerY - 15; // Ajusta para centrar
+                // Calcula la posición de cada silladetail
+                const angle = (i / numberOfSilladetails) * (2 * Math.PI); // Convierte a radianes
+                const x = radius * Math.cos(angle) + centerX - 15; // Ajusta para centrar (15 es la mitad del ancho de silladetail)
+                const y = radius * Math.sin(angle) + centerY - 15; // Ajusta para centrar
 
-        // Establece las posiciones calculadas
-        silladetail.style.left = `${x}px`;
-        silladetail.style.top = `${y}px`;
+                // Establece las posiciones calculadas
+                silladetail.style.left = `${x}px`;
+                silladetail.style.top = `${y}px`;
 
-        // Añade el silladetail al contenedor
-        detailsMesa.appendChild(silladetail);
+                // Añade el silladetail al contenedor
+                detailsMesa.appendChild(silladetail);
 
-        // Añade el evento click al silladetail
-        silladetail.addEventListener('click', function() {
-            const silladetailNumber = silladetail.id.split('-')[1]; // Obtiene el número después de "silladetail-"
+                // Añade el evento click al silladetail
+                silladetail.addEventListener('click', function() {
+                    const silladetailNumber = silladetail.id.split('-')[1]; // Obtiene el número después de "silladetail-"
 
-            // Añadir o quitar la clase selected
-            if (silladetail.classList.contains('selected')) {
-                silladetail.classList.remove('selected'); // Remueve la clase si ya está presente
-                // Elimina el número del input
-                asientosInput.value = asientosInput.value.replace(new RegExp(`-?${silladetailNumber}`, 'g'), '').replace(/^-/, ''); // Elimina el número seleccionado
-                asientosContador--; // Decrementa el contador
-            } else {
-                silladetail.classList.add('selected'); // Añade la clase si no está presente
-                // Verifica si el input ya tiene algún valor
-                if (asientosInput.value) {
-                    asientosInput.value += '-'; // Añade un guion si ya hay asientos seleccionados
-                }
-                asientosInput.value += silladetailNumber; // Agrega el número del silladetail
-                asientosContador++; // Incrementa el contador
+                    // Añadir o quitar la clase selected
+                    if (silladetail.classList.contains('selected')) {
+                        silladetail.classList.remove('selected'); // Remueve la clase si ya está presente
+                        // Elimina el número del input
+                        asientosInput.value = asientosInput.value.replace(new RegExp(`-?${silladetailNumber}`, 'g'), '').replace(/^-/, ''); // Elimina el número seleccionado
+                        asientosContador--; // Decrementa el contador
+                    } else {
+                        silladetail.classList.add('selected'); // Añade la clase si no está presente
+                        // Verifica si el input ya tiene algún valor
+                        if (asientosInput.value) {
+                            asientosInput.value += '-'; // Añade un guion si ya hay asientos seleccionados
+                        }
+                        asientosInput.value += silladetailNumber; // Agrega el número del silladetail
+                        asientosContador++; // Incrementa el contador
+                    }
+
+                    // Actualiza el valor del campo numérico de asientos
+                    document.getElementById('asientos').value = asientosContador;
+                });
             }
-
-            // Actualiza el valor del campo numérico de asientos
-            document.getElementById('asientos').value = asientosContador;
-        });
-    }
-}
-
+        }
     </script>
 
 </x-app-layout>
