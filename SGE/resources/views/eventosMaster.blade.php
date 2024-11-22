@@ -121,19 +121,17 @@
         document.getElementById('save').addEventListener('click', function(event) {
             event.preventDefault(); // Evita el envío del formulario
             const eventId = window.location.pathname.split('/').pop(); // Obtener el eventId de la URL
-            saveConfiguration(); // Llama a la función para guardar la configuración
             sendDataToServer(eventId); // Pasar eventId a la función para enviar los datos al servidor
         });
 
         function sendDataToServer(eventId) {
-            // Recopilar los datos de cada formulario
+            // Recopilar los datos del formulario principal
             const nombre = document.getElementById('nombre').value;
             const descripcion = document.getElementById('descripcion').value;
             const fechaInicio = document.getElementById('date_start').value;
-            console.log("fecha",fechaInicio)
             const espacio = document.getElementById('Lugar').value;
 
-            // Datos de las configuraciones de visualización
+            // Datos adicionales del formulario
             const columnas = document.getElementById('columnas').value;
             const filas = document.getElementById('filas').value;
             const escenarioCantidad = document.getElementById('escenarioCantidad').value;
@@ -146,10 +144,31 @@
             // Calcular la capacidad como la multiplicación de mesasCantidad y sillasxmesa
             const capacidad = mesasCantidad * sillasxmesa;
 
-            // Recoger los valores de la cuadrícula, si se han hecho cambios en los elementos dibujados
-            const config = JSON.parse(localStorage.getItem('visualizerConfig')) || [];
+            // Recoger los valores de la cuadrícula directamente de los elementos generados en `.visualizer`
+            const elements = document.querySelectorAll('.visualizer .rect');
+            const config = [];
 
-            // Crear un objeto con todos los datos que enviarás al controlador
+            elements.forEach(element => {
+                const itemConfig = {
+                    x: parseFloat(element.style.left) / (100 / 21) + 1, // Ajuste de posición en X
+                    y: parseFloat(element.style.top) / (100 / 21) + 1, // Ajuste de posición en Y
+                    width: parseFloat(element.style.width) / (100 / 21), // Ancho relativo
+                    height: parseFloat(element.style.height) / (100 / 21), // Altura relativa
+                    label: element.innerText, // Etiqueta del elemento
+                    type: element.classList.contains('circle') ? 'Mesas' : 'Other', // Determina el tipo basado en la clase
+                    styles: {
+                        borderRadius: element.style.borderRadius,
+                        textAlign: element.style.textAlign,
+                        zIndex: element.style.zIndex
+                    }
+                };
+                config.push(itemConfig);
+            });
+
+            // Convertir config a JSON
+            const jsonConfig = JSON.stringify(config);
+
+            // Crear un objeto con todos los datos que enviarás al servidor
             const data = {
                 nombre: nombre,
                 descripcion: descripcion,
@@ -164,20 +183,21 @@
                 capacidad: capacidad, // Incluir la capacidad calculada
                 precioAdulto: precioAdulto,
                 precioMenor: precioMenor,
-                configuraciones: config
+                configuraciones: jsonConfig // Guardar la configuración directamente
             };
 
-            // Enviar los datos al servidor utilizando AJAX
+            // Enviar los datos al servidor utilizando AJAX con axios
             axios.put(`/events/${eventId}`, data)
                 .then(response => {
                     console.log('Datos guardados exitosamente', response);
-                    window.location.href = `/detallesEvento/${eventId}`;
+                    window.location.href = `/detallesEvento/${eventId}`; // Redirigir a detalles del evento
                 })
                 .catch(error => {
                     console.error('Error al guardar los datos', error);
                 });
         }
     </script>
+
 
     <script src="{{ asset('assets/js/datepicker.js') }}"></script>
 
@@ -315,37 +335,10 @@
 
         // Selecciona el botón por su ID y agrega el event listener
         document.getElementById('save').addEventListener('click', function(event) {
-            event.preventDefault(); // Evita el envío del formulario, si aplica
-            saveConfiguration(); // Llama a la función para guardar la configuración
-            console.log("Configuración guardada"); // Mensaje opcional para confirmar
+            event.preventDefault(); // Evita el envío del formulario
+            const eventId = window.location.pathname.split('/').pop(); // Obtener el eventId de la URL
+            sendDataToServer(eventId); // Pasar eventId a la función para enviar los datos al servidor
         });
-
-        function saveConfiguration() {
-            // Obtener todos los elementos renderizados en el contenedor `.visualizer`
-            const elements = document.querySelectorAll('.visualizer .rect');
-            const config = [];
-
-            elements.forEach(element => {
-                const itemConfig = {
-                    x: parseFloat(element.style.left) / (100 / 21) + 1, // Cambiado a 21
-                    y: parseFloat(element.style.top) / (100 / 21) + 1, // Cambiado a 21
-                    width: parseFloat(element.style.width) / (100 / 21), // Cambiado a 21
-                    height: parseFloat(element.style.height) / (100 / 21), // Cambiado a 21
-                    label: element.innerText,
-                    type: element.classList.contains('circle') ? 'Mesas' : 'Other', // Determina el tipo basado en el estilo
-                    styles: {
-                        borderRadius: element.style.borderRadius,
-                        textAlign: element.style.textAlign,
-                        zIndex: element.style.zIndex
-                    }
-                };
-                config.push(itemConfig);
-            });
-
-            // Guardar configuración en localStorage (o enviarla a un servidor si es necesario)
-            localStorage.setItem('visualizerConfig', JSON.stringify(config));
-            //window.location.href = "adminEventos.php";
-        }
     </script>
 
 

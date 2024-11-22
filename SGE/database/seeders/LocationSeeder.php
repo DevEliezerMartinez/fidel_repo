@@ -14,14 +14,14 @@ class LocationSeeder extends Seeder
         DB::table('location')->insert([
             [
                 'id' => 1,
-                'name' => 'Ubicación 1',
+                'name' => 'Hotel Mundo imperial',
                 'administrator' => '1',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'id' => 2,
-                'name' => 'Ubicación 2',
+                'name' => 'Hotel Pierre',
                 'administrator' => '1',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),

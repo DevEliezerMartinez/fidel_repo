@@ -185,7 +185,7 @@ class EventController extends Controller
             'fecha' => 'required|date',
             'capacidad' => 'required|integer|min:1',
             'lugar' => 'required|exists:spaces,id', // Validar que el lugar exista en la tabla 'spaces'
-            'configuraciones' => 'required|array', // Validar que la configuración sea un array
+            'configuraciones' => 'required', // Validar que la configuración sea un array
         ]);
 
         try {
@@ -205,7 +205,7 @@ class EventController extends Controller
             // Guardar la configuración en la tabla event_layouts
             $layoutData = [
                 'event_id' => $event->id,
-                'layout_json' => json_encode($validatedData['configuraciones']),
+                'layout_json' => ($validatedData['configuraciones']),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

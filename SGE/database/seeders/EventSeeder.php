@@ -22,7 +22,7 @@ class EventSeeder extends Seeder
             [
                 'space_id' => 2,  // Relación con la tabla 'spaces'
                 'name' => 'Taller de Marketing Digital',
-                'event_date' => now()->addDays(7),  // 7 días después de la fecha actual
+                'event_date' => now()->addDays(1),  // 7 días después de la fecha actual
                 'capacity' => 30,
                 'remaining_capacity' => 30,
                 'created_at' => now(),
