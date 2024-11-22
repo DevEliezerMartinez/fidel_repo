@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\EventLayout;
 use App\Models\Location;
+use App\Models\Seat;
 use App\Models\Space;
+use App\Models\Table;
 use App\Models\User;
 use Carbon\Carbon;  // Esto debe estar en la parte superior del archivo del controlador
 use Illuminate\Http\Request;
@@ -46,6 +48,37 @@ class EventController extends Controller
         return view('panorama_gral', compact('events', 'locations', 'dateStart', 'dateEnd', 'ubicacion'));
     }
 
+    public function reservacionEvento($eventId, $tableId)
+    {
+        // Eliminar todos los caracteres que no sean numéricos
+        $tableId = preg_replace('/\D/', '', $tableId);
+
+        $event = Event::findOrFail($eventId);
+
+        $eventLayout = $event->layout; // Esto debería devolver el layout asociado
+
+
+        // Obtener la mesa usando el event_layout_id
+        $mesa = Table::where('event_layout_id', $eventLayout->id)
+            ->where('table_number', $tableId) // Ahora buscamos por table_number
+            ->firstOrFail();
+
+        // Obtener las sillas asociadas a la mesa
+        $sillas = $mesa->seats;
+
+        // Contar asientos vendidos y disponibles
+        $asientosVendidos = $sillas->where('is_reserved', 1)->count();
+        $asientosDisponibles = $sillas->where('is_reserved', 0)->count();
+        $totalAsientos = $sillas->count();
+
+        // Pasar los datos a la vista
+        return view('reservacionEvento', compact('event', 'mesa', 'sillas','asientosVendidos','totalAsientos', 'asientosDisponibles','tableId'));
+    }
+
+
+
+
+
 
 
 
@@ -65,15 +98,40 @@ class EventController extends Controller
 
     public function show($id)
     {
-        // Buscar el evento por su ID con relaciones necesarias
+        // Buscar el evento por su ID con las relaciones necesarias
         $event = Event::with('space.location')->findOrFail($id);
 
         // Verificar si el evento tiene un layout asociado
         $layout = EventLayout::where('event_id', $id)->first();
 
-        // Pasar los datos del evento y layout a la vista
-        return view('detallesEvento', compact('event', 'layout'));
+        // Obtener todas las mesas asociadas al layout
+        $tables = Table::where('event_layout_id', $layout->id)->get();
+
+        // Calcular la capacidad total, asientos vendidos y disponibles
+        $capacidadTotal = $tables->sum('total_seats');
+        $vendidos = Seat::whereIn('table_id', $tables->pluck('id'))->where('is_reserved', 1)->count();
+        $disponibles = Seat::whereIn('table_id', $tables->pluck('id'))->where('is_reserved', 0)->count();
+
+        // Calcular las mesas vendidas y disponibles
+        $mesasVendidas = $tables->filter(function ($table) {
+            return Seat::where('table_id', $table->id)->where('is_reserved', 0)->count() === 0;
+        })->count();
+
+        $mesasDisponibles = $tables->count() - $mesasVendidas;
+
+        // Pasar los datos a la vista
+        return view('detallesEvento', compact(
+            'event',
+            'layout',
+            'capacidadTotal',
+            'vendidos',
+            'disponibles',
+            'mesasVendidas',
+            'mesasDisponibles'
+        ));
     }
+
+
 
 
 
@@ -184,8 +242,10 @@ class EventController extends Controller
             'descripcion' => 'required|string|max:255',
             'fecha' => 'required|date',
             'capacidad' => 'required|integer|min:1',
-            'lugar' => 'required|exists:spaces,id', // Validar que el lugar exista en la tabla 'spaces'
-            'configuraciones' => 'required', // Validar que la configuración sea un array
+            'lugar' => 'required|exists:spaces,id',
+            'configuraciones' => 'required',
+            'mesasCantidad' => 'required|integer|min:1',
+            'sillasxmesa' => 'required|integer|min:1',
         ]);
 
         try {
@@ -199,25 +259,50 @@ class EventController extends Controller
             $event->capacity = $validatedData['capacidad'];
             $event->space_id = $validatedData['lugar'];
 
-            // Guardar los cambios en la base de datos
+            // Guardar los cambios del evento
             $event->save();
 
-            // Guardar la configuración en la tabla event_layouts
-            $layoutData = [
-                'event_id' => $event->id,
-                'layout_json' => ($validatedData['configuraciones']),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-
-            // Insertar o actualizar la configuración en event_layouts
-            EventLayout::updateOrCreate(
+            // Guardar configuración en event_layouts
+            $layout = EventLayout::updateOrCreate(
                 ['event_id' => $event->id],
-                $layoutData
+                [
+                    'layout_json' => $validatedData['configuraciones'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
             );
 
+            // Crear mesas y sillas
+            $mesasCantidad = $validatedData['mesasCantidad'];
+            $sillasPorMesa = $validatedData['sillasxmesa'];
+
+            // El número global de sillas (seat_number) para todas las mesas
+            $seatNumber = 1;
+
+            for ($i = 1; $i <= $mesasCantidad; $i++) {
+                // Crear la mesa con table_number incremental
+                $table = Table::updateOrCreate(
+                    ['event_layout_id' => $layout->id, 'table_number' => $i],
+                    [
+                        'total_seats' => $sillasPorMesa,
+                        'available_seats' => $sillasPorMesa,
+                    ]
+                );
+
+                // Crear las sillas para esta mesa
+                for ($j = 1; $j <= $sillasPorMesa; $j++) {
+                    Seat::updateOrCreate(
+                        ['table_id' => $table->id, 'seat_number' => $seatNumber],
+                        ['is_reserved' => 0]
+                    );
+
+                    // Incrementar el número global de sillas
+                    $seatNumber++;
+                }
+            }
+
             return response()->json([
-                'success' => 'Evento actualizado exitosamente y configuración guardada',
+                'success' => 'Evento, mesas y sillas actualizados exitosamente',
             ], 200);
         } catch (\Exception $e) {
             // Manejo de errores
@@ -227,6 +312,8 @@ class EventController extends Controller
             ], 500);
         }
     }
+
+
 
     public function toggleStatus(Request $request, Event $event)
     {

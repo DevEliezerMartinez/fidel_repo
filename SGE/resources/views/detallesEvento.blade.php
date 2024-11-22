@@ -13,7 +13,7 @@
     <!-- Mostrar layout del evento -->
     <div class="global_element">
         <div id="layout-container">
-          <!--   <pre>{{ $layout->layout_json }}</pre>  --><!-- Muestra el JSON o úsalo para renderizar -->
+            <!--   <pre>{{ $layout->layout_json }}</pre>  --><!-- Muestra el JSON o úsalo para renderizar -->
         </div>
 
         <form class="basic_info">
@@ -61,10 +61,11 @@
         </form>
         <div class="infomesas">
             <p>Mesas vendidas</p>
-            <span class="info_mesa vendidas">0</span>
+            <span class="info_mesa vendidas">{{ $mesasVendidas }}</span>
             <p>Mesas disponibles</p>
-            <span class="info_mesa disponibles">10</span>
+            <span class="info_mesa disponibles">{{ $mesasDisponibles }}</span>
         </div>
+
 
 
         <div class="details">
@@ -74,13 +75,16 @@
 
             <div class="info_details">
                 <div class="element">
-                    <p>Capacidad total <span id="capacidad">100</span> </p>
-                </div>
-                <div class="element">6
-                    <p>Asientos vendidos total <span id="vendidos">16</span> </p>
-                </div>
-                <div class="element">
-                    <p>Asientos disponibles <span id="disponibles">84</span> </p>
+                    <div class="element">
+                        <p>Capacidad total: <span id="capacidad">{{ $capacidadTotal }}</span></p>
+                    </div>
+                    <div class="element">
+                        <p>Asientos vendidos total: <span id="vendidos">{{ $vendidos }}</span></p>
+                    </div>
+                    <div class="element">
+                        <p>Asientos disponibles: <span id="disponibles">{{ $disponibles }}</span></p>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -183,8 +187,11 @@
             // Agregar el evento de clic solo a los elementos de mesa
             if (type === 'individual') {
                 rectangle.addEventListener('click', function() {
-                    alert(`Mesa seleccionada: ${label}`); // Acción al hacer clic
-                    window.location.href = "reservacionEvento.php";
+                    alert(`Mesa seleccionada: ${label}`); // Mostrar el label en un alert
+                    // Redirigir con el evento y la mesa como parámetros
+                    const eventId = window.location.pathname.split('/')[2];  // Esto obtiene el ID del evento de la URL
+                    console.log(eventId)
+                    window.location.href = `reservacionEvento/${eventId}/${encodeURIComponent(label)}`;
                 });
             }
 

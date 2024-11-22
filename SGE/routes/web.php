@@ -24,6 +24,9 @@ Route::get('/adminEventos', [EventController::class, 'sh2'])->middleware(['auth'
 // Ruta para mostrar los detalles de un evento específico
 Route::get('/detallesEvento/{id}', [EventController::class, 'show'])->middleware(['auth'])->name('detallesEvento');
 
+Route::get('detallesEvento/reservacionEvento/{eventId}/{mesa}', [EventController::class, 'reservacionEvento'])
+    ->name('reservacionEvento');
+    
 Route::get('/events/{eventId}', [EventController::class, 'showDetalles']);
 Route::put('/events/{eventId}', [EventController::class, 'updateInfo'])->name('events.update');
 

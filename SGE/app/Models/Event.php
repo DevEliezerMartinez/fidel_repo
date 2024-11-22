@@ -32,4 +32,9 @@ class Event extends Model
         return $this->belongsTo(Space::class);
     }
 
+    public function layout()
+{
+    return $this->hasOne(EventLayout::class, 'event_id'); // Asegúrate de que 'event_id' sea la columna correcta
+}
+
 }

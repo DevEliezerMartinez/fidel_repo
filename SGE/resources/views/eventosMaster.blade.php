@@ -189,6 +189,7 @@
             // Enviar los datos al servidor utilizando AJAX con axios
             axios.put(`/events/${eventId}`, data)
                 .then(response => {
+                    console.log("datso env",data)
                     console.log('Datos guardados exitosamente', response);
                     window.location.href = `/detallesEvento/${eventId}`; // Redirigir a detalles del evento
                 })
@@ -333,12 +334,7 @@
             }
         }
 
-        // Selecciona el botón por su ID y agrega el event listener
-        document.getElementById('save').addEventListener('click', function(event) {
-            event.preventDefault(); // Evita el envío del formulario
-            const eventId = window.location.pathname.split('/').pop(); // Obtener el eventId de la URL
-            sendDataToServer(eventId); // Pasar eventId a la función para enviar los datos al servidor
-        });
+      
     </script>
 
 
