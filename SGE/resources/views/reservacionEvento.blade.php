@@ -1,70 +1,9 @@
 <x-app-layout>
 
-
-    <div class="ticket hidden_element">
-        <div class="card_ticket">
-            <div class="card_header">
-                <img src="{{ asset('assets/img/Logos/logo_color.png') }}" alt="">
-
-                <div class="number_ticket">#241</div>
-            </div>
-
-
-            <div class="card_body">
-                <h3>Fiesta Mexicana</h3>
-                <div class="row">
-                    <p>Descripcion:</p>
-                    <span>Fiesta para celebrar el grito de la independencia con increibe mariachi.</span>
-                </div>
-
-
-                <div class="row">
-                    <p>Fecha evento:</p>
-                    <span>2024-12-12</span>
-                </div>
-
-
-                <div class="row">
-                    <p>Propiedad:</p>
-                    <span>Palacio Mundo imperial</span>
-                </div>
-
-
-
-                <div class="row">
-                    <p>Lugar:</p>
-                    <span>Salon A.</span>
-                </div>
-
-
-
-                <h3>Detalles de la reservacion</h3>
-
-                <div class="row">
-                    <p>Nombre reservacion:</p>
-                    <span>Karla Edith Gallardo Santos</span>
-                </div>
-
-
-
-                <div class="row">
-                    <p>Fecha reservacion</p>
-                    <span>13-09-2024</span>
-                </div>
-
-
-            </div>
-
-
-
-
-
-        </div>
-    </div>
-
-
+    <h2>Evento: {{ $event->name }}</h2>
 
     <form class="basic_info">
+
         <div class="sideform">
             <label for="descripcion">Descripción</label>
             <textarea name="descripcion" id="descripcion" readonly>{{ old('descripcion', $event->descripcion) }}</textarea>
@@ -166,7 +105,7 @@
 
     <script>
         // Inicializa el tiempo en segundos (5 minutos)
-        let totalSeconds = 1 * 60;
+        let totalSeconds = 5 * 60;
 
         // Función para actualizar el temporizador
         function updateTimer() {
