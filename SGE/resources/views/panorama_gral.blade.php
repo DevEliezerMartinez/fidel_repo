@@ -28,12 +28,12 @@
                 <div class="options date_start">
                     <img src="./assets/img/icons/calendar.png" alt="calendar">
                     <input type="text" id="date_start" name="date_start" placeholder="Fecha de inicio"
-                        value="{{ request('date_start') }}">
+                        value="{{ request('date_start', $dateStart) }}">
                 </div>
                 <div class="options date_end">
                     <img src="./assets/img/icons/calendar.png" alt="calendar">
                     <input type="text" id="date_end" name="date_end" placeholder="Fecha de fin"
-                        value="{{ request('date_end') }}">
+                        value="{{ request('date_end', $dateEnd) }}">
                 </div>
                 <div class="options filter">
                     <button class="filter_dates" type="submit">Filtrar</button>
@@ -54,13 +54,14 @@
                     @endif
                 </div> <!-- Muestra 0 si no hay eventos o las fechas no están definidas -->
             </div>
-        
+
             <div class="events_info">
                 <div class="card_event_info">
                     <p>Capacidad total</p>
                     <div class="secondary_circles">
                         @if ($dateStart && $dateEnd)
-                            {{ $events->sum('capacity') ?: 0 }} <!-- Muestra 0 si no hay capacidad de eventos filtrados -->
+                            {{ $events->sum('capacity') ?: 0 }}
+                            <!-- Muestra 0 si no hay capacidad de eventos filtrados -->
                         @else
                             0
                         @endif
@@ -70,7 +71,8 @@
                     <p>Asientos vendidos</p>
                     <div class="secondary_circles">
                         @if ($dateStart && $dateEnd)
-                            {{ ($events->sum('capacity') - $events->sum('remaining_capacity')) ?: 0 }} <!-- Muestra 0 si no hay asientos vendidos -->
+                            {{ $events->sum('capacity') - $events->sum('remaining_capacity') ?: 0 }}
+                            <!-- Muestra 0 si no hay asientos vendidos -->
                         @else
                             0
                         @endif
@@ -80,17 +82,18 @@
                     <p>Asientos disponibles</p>
                     <div class="secondary_circles">
                         @if ($dateStart && $dateEnd)
-                            {{ $events->sum('remaining_capacity') ?: 0 }} <!-- Muestra 0 si no hay asientos disponibles -->
+                            {{ $events->sum('remaining_capacity') ?: 0 }}
+                            <!-- Muestra 0 si no hay asientos disponibles -->
                         @else
                             0
                         @endif
                     </div>
                 </div>
             </div>
-        
+
         </section>
-        
-        
+
+
 
         <section class="list_events">
             @if ($dateStart && $dateEnd)
@@ -98,7 +101,7 @@
                     <p>No se encontraron eventos para el rango de fechas seleccionado.</p>
                 @else
                     @foreach ($events as $event)
-                        <div class="event">
+                        <div class="event" style="border: 1px solid {{ $event->color }};">
                             <!-- Convertimos el nombre del evento en un enlace -->
                             <a id="name_event" href="{{ url('detallesEvento', ['id' => $event->id]) }}">
                                 {{ $event->name }}
@@ -135,8 +138,51 @@
             });
             document.getElementById('ubicacion-' + ubicacion.replace(/\s+/g, '-').toLowerCase()).classList.add('active');
         }
+
+        const data = @json($events); // Esto inyecta los datos de los eventos como un objeto JavaScript
+        console.log("data de los events", data)
+
+        // Crear un set para evitar leyendas duplicadas por ubicaciones
+        const leyendsDiv = document.querySelector('.leyends');
+        leyendsDiv.innerHTML = ''; // Limpiar leyendas anteriores
+
+        // Asegúrate de que 'data' esté correctamente definido y contiene los eventos
+        const ubicacionesSet = new Set(); // Este Set almacenará los colores asociados a las ubicaciones
+
+        console.log("aqui no deberia haber nada", ubicacionesSet)
+
+        // Verifica que 'data' esté disponible y sea un array
+        if (data && Array.isArray(data)) {
+            data.forEach(evento => {
+                // Asegúrate de que 'evento' tenga la propiedad 'space.name' y 'color' antes de añadirlo al Set
+                if (evento.space && evento.space.name && evento.color) {
+                    // Usamos 'evento.space.location.name' para identificar la ubicación única
+                    const ubicacion = evento.space.location.name ||
+                    'Sin ubicación'; // Default a 'Sin ubicación' si no está definida
+
+                    // Verifica si la ubicación ya está en el Set para evitar duplicados
+                    if (!ubicacionesSet.has(ubicacion)) {
+                        ubicacionesSet.add(ubicacion); // Añadimos la ubicación al Set
+
+                        const labelDiv = document.createElement('div');
+                        labelDiv.classList.add('label_info');
+
+                        const colorClass = evento.color || ''; // Si no existe, poner una cadena vacía
+                        console.log("color para asignar", colorClass)
+
+                        labelDiv.innerHTML = `
+                            <div class="bar" style="background-color: ${colorClass}"></div>
+                            <span>${ubicacion}</span>
+                        `;
+
+                        leyendsDiv.appendChild(labelDiv);
+                    }
+                }
+            });
+        }
     </script>
 
+
     <script src="{{ asset('assets/js/datepicker.js') }}"></script>
-   
+
 </x-app-layout>

@@ -3,20 +3,35 @@
 
         <div class="header_sidebar full_center">
             <div class="user_abreviation" id="userInitials">
-                @if(Auth::check()) <!-- Verificamos si hay un usuario autenticado -->
-                {{ strtoupper(Auth::user()->username) }} <!-- Mostramos el username en mayúsculas -->
+                @if (Auth::check())
+                    <!-- Verificamos si hay un usuario autenticado -->
+                    {{ strtoupper(Auth::user()->username) }} <!-- Mostramos el username en mayúsculas -->
                 @else
-                <span>?</span> <!-- Si no hay usuario autenticado, mostramos un signo de interrogación -->
+                    <span>?</span> <!-- Si no hay usuario autenticado, mostramos un signo de interrogación -->
                 @endif
             </div>
 
             <h2>Reservación de eventos</h2>
-            <p>Bienvenido <span id="userName">{{ Auth::user()->name . ' ' . Auth::user()->lastname }}</span></p>
-            <span> </span>
+            <p class="welcome_user">Bienvenido {{ Auth::user()->name . ' ' . Auth::user()->lastname }}</p>
+
+            <div class="location_space">
+                @if (Auth::check())
+                    @if (Auth::user()->location)
+                        <p>{{ Auth::user()->location->name }}</p>
+                    @else
+                        <span></span>
+                    @endif
+                @else
+                    <span>...</span>
+                @endif
+            </div>
+
+
+
         </div>
 
         <div class="options_sidebar">
-            <button onclick="window.location.href='{{ route('dashboard') }}';">
+            <button id="panorama_button" onclick="window.location.href='{{ route('dashboard') }}';">
                 <img src="{{ asset('assets/img/icons/stats.png') }}" alt="icon">
                 <a class="no_link" href="#">Panorama General</a>
             </button>
@@ -43,7 +58,7 @@
         <div class="footer_sidebar">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf <!-- Token de CSRF para proteger el formulario -->
-                <button type="submit" class="full_center">
+                <button id="logout" type="submit" class="full_center">
                     <img src="{{ asset('assets/img/icons/logout.png') }}" alt="logout">
                     Cerrar sesión
                 </button>

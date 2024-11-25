@@ -12,13 +12,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (!configButton) {
-            console.error("El botón de configuración no se encontró en el DOM.");
+            console.error(
+                "El botón de configuración no se encontró en el DOM."
+            );
         }
     }
 
     // Función para mostrar u ocultar las opciones de ajustes
     function toggleAjustes() {
-        const minimodaloptions = document.getElementsByClassName("options_ajustes")[0];
+        const minimodaloptions =
+            document.getElementsByClassName("options_ajustes")[0];
 
         if (!minimodaloptions) {
             console.error("No se encontraron opciones de ajustes.");
@@ -38,7 +41,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Función para mostrar u ocultar el menú de configuración
     function toggleConfig() {
-        const menu_config = document.getElementsByClassName("options_config")[0];
+        const menu_config =
+            document.getElementsByClassName("options_config")[0];
+
+        // Elimina la clase si ya existe
+        configButton.classList.remove("animation_gear");
+
+        // Usa un pequeño retraso para asegurar que la animación se reinicie
+        setTimeout(() => {
+            configButton.classList.add("animation_gear");
+        }, 10); // 10ms son suficientes para reiniciar la animación
 
         if (!menu_config) {
             console.error("No se encontraron opciones de configuración.");
@@ -73,7 +85,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 inputUbicacion.value = ubicacion; // Asigna el valor al input
 
                 // Quitar clase 'options_config_active' de todas las opciones
-                opciones.forEach((opt) => opt.classList.remove("options_config_active"));
+                opciones.forEach((opt) =>
+                    opt.classList.remove("options_config_active")
+                );
                 opcion.classList.add("options_config_active");
 
                 // Cerrar el menú de configuración

@@ -1,109 +1,113 @@
 <x-app-layout>
     <div class="main_header">
         <h3>Layout del Evento</h3>
-        <img src="{{ asset('assets/img/icons/config.png') }}" alt="config">
+        {{-- <img src="{{ asset('assets/img/icons/config.png') }}" alt="config"> --}}
 
-        <div class="options_config">
-            <a href="" class="botton_option">Palacio mundo imperial</a>
-            <a href="" class="botton_option">Princess mundo imperial</a>
-        </div>
+
     </div>
 
-    @if($layout)
-    <!-- Mostrar layout del evento -->
-    <div class="global_element">
-        <div id="layout-container">
-            <!--   <pre>{{ $layout->layout_json }}</pre>  --><!-- Muestra el JSON o úsalo para renderizar -->
-        </div>
-
-        <form class="basic_info">
-
-            <div class="sideform">
-
-                <label for="descripcion">Descripción</label>
-                <textarea name="descripcion" id="descripcion" readonly>{{ $event->descripcion }}</textarea>
+    @if (isset($layout)) <!-- Mostrar layout del evento -->
+        <div class="global_element">
+            <div id="layout-container">
+                <!--   <pre>{{ $layout->layout_json }}</pre>  --><!-- Muestra el JSON o úsalo para renderizar -->
             </div>
 
-            <div class="right_form">
+            <form class="basic_info">
 
-                <div class="options_conteiner">
-                    <label for="fecha">Fecha</label>
-                    <div class="options date_start">
-                        <img src="{{ asset('assets/img/icons/calendar.png') }}" alt="calendar">
+                <div class="sideform">
+
+                    <label for="descripcion">Descripción:</label>
+                    <input type="hidden" name="descripcion" id="descripcion" readonly disabled value="">
+                    <span> {{ $event->descripcion }}</span>
+                </div>
+
+                <div class="right_form">
+
+                    <div class="options_conteiner">
+                        <label for="fecha">Fecha</label>
+                        <div class="options date_start">
+                            <img src="{{ asset('assets/img/icons/calendar.png') }}" alt="calendar">
 
 
-                        <input type="text" id="date_start" value="{{ $event->event_date }}" readonly disabled>
+                            <input type="text" id="date_start" value="{{ $event->event_date }}" readonly disabled>
+                        </div>
+
+
                     </div>
 
+                    <div class="lugar">
 
+                        <label for="Lugar">Lugar:</label>
+                        <select name="Lugar" id="Lugar" disabled>
+                            @if ($event->space && $event->space->location)
+                                <option value="{{ $event->space->location->id }}" selected>
+                                    {{ $event->space->location->name }}
+                                </option>
+                            @else
+                                <option value="">Sin lugar asociado</option>
+                            @endif
+                        </select>
+                    </div>
                 </div>
 
-                <div class="lugar">
 
-                    <label for="Lugar">Lugar:</label>
-                    <select name="Lugar" id="Lugar" disabled>
-                        @if ($event->space && $event->space->location)
-                        <option value="{{ $event->space->location->id }}" selected>
-                            {{ $event->space->location->name }}
-                        </option>
-                        @else
-                        <option value="">Sin lugar asociado</option>
-                        @endif
-                    </select>
-                </div>
+
+
+
+
+            </form>
+            <div class="infomesas">
+                <p>Mesas vendidas</p>
+                <span class="info_mesa vendidas">{{ $mesasVendidas }}</span>
+                <p>Mesas disponibles</p>
+                <span class="info_mesa disponibles">{{ $mesasDisponibles }}</span>
             </div>
 
 
 
+            <div class="details">
+
+                <div class="info"></div>
 
 
-
-        </form>
-        <div class="infomesas">
-            <p>Mesas vendidas</p>
-            <span class="info_mesa vendidas">{{ $mesasVendidas }}</span>
-            <p>Mesas disponibles</p>
-            <span class="info_mesa disponibles">{{ $mesasDisponibles }}</span>
-        </div>
-
-
-
-        <div class="details">
-
-            <div class="info"></div>
-
-
-            <div class="info_details">
-                <div class="element">
+                <div class="info_details">
                     <div class="element">
-                        <p>Capacidad total: <span id="capacidad">{{ $capacidadTotal }}</span></p>
-                    </div>
-                    <div class="element">
-                        <p>Asientos vendidos total: <span id="vendidos">{{ $vendidos }}</span></p>
-                    </div>
-                    <div class="element">
-                        <p>Asientos disponibles: <span id="disponibles">{{ $disponibles }}</span></p>
-                    </div>
+                        <div class="element">
+                            <p>Capacidad total: <span id="capacidad">{{ $capacidadTotal }}</span></p>
+                        </div>
+                        <div class="element">
+                            <p>Asientos vendidos total: <span id="vendidos">{{ $vendidos }}</span></p>
+                        </div>
+                        <div class="element">
+                            <p>Asientos disponibles: <span id="disponibles">{{ $disponibles }}</span></p>
+                        </div>
 
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     @else
-    <!-- Mostrar mensaje de no información -->
-    <div class="no_info">
-        <img src="{{ asset('assets/img/icons/alert.png') }}" alt="alert">
-        <p>Información no disponible</p>
-        <span>El evento no tiene layout asociado.</span>
-        <a href="{{ route('dashboard') }}">Regresar</a>
-    </div>
+        <!-- Mostrar mensaje de no información -->
+        <div class="no_info">
+            <img src="{{ asset('assets/img/icons/alert.png') }}" alt="alert">
+            <p>Información no disponible</p>
+            <span>El evento no tiene layout asociado.</span>
+            <a href="{{ route('dashboard') }}">Regresar</a>
+        </div>
     @endif
 
     <script src="{{ asset('assets/js/datepicker.js') }}"></script>
 
     <script>
-        // Llama a la función principal pasando la configuración inicial
-        renderConfig(JSON.parse(`{!! $layout->layout_json !!}`));
+        // Verificar si $layout y $layout->layout_json están definidos antes de ejecutar JavaScript
+        @if (isset($layout) && !empty($layout->layout_json))
+            // Si layout_json está disponible, parsear el JSON
+            const layoutData = JSON.parse(`{!! $layout->layout_json !!}`);
+            renderConfig(layoutData); // Llamar a la función con los datos parseados
+        @else
+            // Si no hay datos, puedes manejar el caso aquí o mostrar un error
+            console.warn('No hay datos de layout disponibles.');
+        @endif
 
         function renderConfig(configData) {
             const groupedElements = {};
@@ -172,9 +176,13 @@
             rectangle.style.top = `${y * cellSize}px`;
             rectangle.style.width = `${width * cellSize}px`;
             rectangle.style.height = `${height * cellSize}px`;
-
+            console.log("label es ",label)
             // Verificar si el label es un elemento individual (tipo 'm') para hacerlo redondo
-            if (type === 'individual') {
+            if (label.charAt(0) == 'e' || label.charAt(0)== 'p') {
+                // Estilos para rectángulos con label que empieza con "E"
+                rectangle.style.backgroundColor = '#031227'; // Fondo de color oscuro
+                rectangle.style.color = '#ffffff'; // Color del texto blanco
+            } else if (type === 'individual') {
                 rectangle.style.borderRadius = '50%'; // Hacerlo redondo
                 rectangle.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // Color diferente para distinguir
             } else {
@@ -189,7 +197,8 @@
                 rectangle.addEventListener('click', function() {
                     alert(`Mesa seleccionada: ${label}`); // Mostrar el label en un alert
                     // Redirigir con el evento y la mesa como parámetros
-                    const eventId = window.location.pathname.split('/')[2];  // Esto obtiene el ID del evento de la URL
+                    const eventId = window.location.pathname.split('/')[
+                        2]; // Esto obtiene el ID del evento de la URL
                     console.log(eventId)
                     window.location.href = `reservacionEvento/${eventId}/${encodeURIComponent(label)}`;
                 });

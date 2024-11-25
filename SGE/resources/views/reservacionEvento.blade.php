@@ -6,7 +6,8 @@
 
         <div class="sideform">
             <label for="descripcion">Descripción</label>
-            <textarea name="descripcion" id="descripcion" readonly>{{ old('descripcion', $event->descripcion) }}</textarea>
+            <input type="hidden" name="descripcion" id="descripcion" readonly disabled value="">
+            <span> {{ $event->descripcion }}</span>
         </div>
 
         <div class="right_form">
@@ -23,11 +24,11 @@
                 <label for="Lugar">Lugar:</label>
                 <select name="Lugar" id="Lugar" disabled>
                     @if ($event->space && $event->space->location)
-                    <option value="{{ $event->space->location->id }}" selected>
-                        {{ $event->space->location->name }}
-                    </option>
+                        <option value="{{ $event->space->location->id }}" selected>
+                            {{ $event->space->location->name }}
+                        </option>
                     @else
-                    <option value="">Sin lugar asociado</option>
+                        <option value="">Sin lugar asociado</option>
                     @endif
                 </select>
             </div>
@@ -144,10 +145,10 @@
             // Añadir el EventListener al botón de reserva
             const reservaButton = document.getElementById('reserva');
             reservaButton.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevenir el envío si no coi
+                event.preventDefault(); // Prevenir el envío por defecto
+
                 // Verificar si el tiempo ha terminado antes de enviar el formulario
-                if (totalSeconds < 0) {
-                    event.preventDefault(); // Prevenir el envío si el tiempo está agotado
+                if (typeof totalSeconds !== 'undefined' && totalSeconds < 0) {
                     alert("Tiempo agotado. No puedes realizar la reserva.");
                     return; // Evita que el código continúe si el tiempo está agotado
                 }
@@ -156,8 +157,14 @@
                 const adultos = parseInt(document.getElementById('adultos').value) || 0;
                 const infantes = parseInt(document.getElementById('infantes').value) || 0;
                 const menores = parseInt(document.getElementById('menores').value) || 0;
-                const name = document.getElementById('name').value;
-                const fechaReservacion = parseIntdocument.getElementById('fechaReservacion').value;
+                const name = document.getElementById('name').value.trim(); // Remover espacios
+                const fechaReservacion = document.getElementById('fechaReservacion').value.trim();
+
+                // Verificar si los campos requeridos están llenos
+                if (!name || !fechaReservacion) {
+                    alert("Por favor, completa todos los campos requeridos.");
+                    return;
+                }
 
                 // Sumar los valores
                 const sumaPersonas = adultos + infantes + menores;
@@ -181,26 +188,30 @@
                     };
 
                     // Enviar los datos al endpoint con fetch
-                    fetch('https://tu-endpoint.com/reservar', {
+                    fetch('/api/reservar', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                             },
                             body: JSON.stringify(reservaData) // Convierte los datos a formato JSON
                         })
-                        .then(response => response.json()) // Si la respuesta es JSON, la parsea
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error en la respuesta del servidor');
+                            }
+                            return response.json(); // Si la respuesta es JSON, la parsea
+                        })
                         .then(data => {
                             if (data.success) {
                                 alert("Reserva realizada con éxito.");
                             } else {
-                                alert("Hubo un error al realizar la reserva.");
+                                alert(data.message || "Hubo un error al realizar la reserva.");
                             }
                         })
                         .catch(error => {
                             console.error('Error al enviar la reserva:', error);
-                            alert("Hubo un error al enviar los datos.");
+                            alert("Hubo un error al enviar los datos. Inténtalo más tarde.");
                         });
-
                 } else {
                     // Si no coinciden, mostrar un mensaje de error
                     alert("La suma de Adultos, Infantes y Menores debe ser igual al número de asientos.");
@@ -248,7 +259,8 @@
 
                 // Calcula la posición de cada silladetail
                 const angle = (i / numberOfSilladetails) * (2 * Math.PI); // Convierte a radianes
-                const x = radius * Math.cos(angle) + centerX - 15; // Ajusta para centrar (15 es la mitad del ancho de silladetail)
+                const x = radius * Math.cos(angle) + centerX -
+                    15; // Ajusta para centrar (15 es la mitad del ancho de silladetail)
                 const y = radius * Math.sin(angle) + centerY - 15; // Ajusta para centrar
 
                 // Establece las posiciones calculadas
@@ -260,13 +272,15 @@
 
                 // Añade el evento click al silladetail
                 silladetail.addEventListener('click', function() {
-                    const silladetailNumber = silladetail.id.split('-')[1]; // Obtiene el número después de "silladetail-"
+                    const silladetailNumber = silladetail.id.split('-')[
+                        1]; // Obtiene el número después de "silladetail-"
 
                     // Añadir o quitar la clase selected
                     if (silladetail.classList.contains('selected')) {
                         silladetail.classList.remove('selected'); // Remueve la clase si ya está presente
                         // Elimina el número del input
-                        asientosInput.value = asientosInput.value.replace(new RegExp(`-?${silladetailNumber}`, 'g'), '').replace(/^-/, ''); // Elimina el número seleccionado
+                        asientosInput.value = asientosInput.value.replace(new RegExp(`-?${silladetailNumber}`, 'g'),
+                            '').replace(/^-/, ''); // Elimina el número seleccionado
                         asientosContador--; // Decrementa el contador
                     } else {
                         silladetail.classList.add('selected'); // Añade la clase si no está presente

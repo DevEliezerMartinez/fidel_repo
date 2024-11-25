@@ -30,16 +30,17 @@
                 <label for="fecha">Fecha</label>
                 <div class="options date_start">
                     <img src="{{ asset('assets/img/icons/calendar.png') }}" alt="calendar">
-                    <input type="text" name="fecha" id="date_start" placeholder="Fecha de inicio" value="{{ $event->event_date ?? '' }}">
+                    <input type="text" name="fecha" id="date_start" placeholder="Fecha de inicio"
+                        value="{{ $event->event_date ?? '' }}">
                 </div>
             </div>
             <div class="lugar">
                 <label for="Lugar">Lugar:</label>
                 <select name="lugar" id="Lugar">
-                    @foreach($spaces as $space)
-                    <option value="{{ $space->id }}" {{ $event->space_id == $space->id ? 'selected' : '' }}>
-                        {{ $space->name }}
-                    </option>
+                    @foreach ($spaces as $space)
+                        <option value="{{ $space->id }}" {{ $event->space_id == $space->id ? 'selected' : '' }}>
+                            {{ $space->name }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -138,8 +139,7 @@
                 // Asignar un espacio en blanco explícito
                 const valorEnviar = " ";
                 console.log("Se enviará un espacio en blanco:", valorEnviar);
-            } else {
-            }
+            } else {}
             const fechaInicio = document.getElementById('date_start').value;
             const espacio = document.getElementById('Lugar').value;
 
@@ -161,6 +161,18 @@
             const elements = document.querySelectorAll('.visualizer .rect');
             const config = [];
 
+            function rgbToHex(rgb) {
+                const result = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/.exec(rgb);
+                if (result) {
+                    return "#" +
+                        ("0" + parseInt(result[1], 10).toString(16)).slice(-2) +
+                        ("0" + parseInt(result[2], 10).toString(16)).slice(-2) +
+                        ("0" + parseInt(result[3], 10).toString(16)).slice(-2);
+                }
+                return rgb;
+            }
+
+
             elements.forEach(element => {
                 const itemConfig = {
                     x: parseFloat(element.style.left) / (100 / 21) + 1, // Ajuste de posición en X
@@ -168,13 +180,16 @@
                     width: parseFloat(element.style.width) / (100 / 21), // Ancho relativo
                     height: parseFloat(element.style.height) / (100 / 21), // Altura relativa
                     label: element.innerText, // Etiqueta del elemento
-                    type: element.classList.contains('circle') ? 'Mesas' : 'Other', // Determina el tipo basado en la clase
+                    type: element.classList.contains('circle') ? 'Mesas' :
+                    'Other', // Determina el tipo basado en la clase
                     styles: {
                         borderRadius: element.style.borderRadius,
                         textAlign: element.style.textAlign,
-                        zIndex: element.style.zIndex
+                        zIndex: element.style.zIndex,
+                        backgroundColor: rgbToHex(element.style.backgroundColor) // Convertir RGB a Hex
                     }
                 };
+                console.log(itemConfig)
                 config.push(itemConfig);
             });
 
@@ -205,7 +220,7 @@
                 .then(response => {
                     console.log("datso env", data)
                     console.log('Datos guardados exitosamente', response);
-                    window.location.href = `/detallesEvento/${eventId}`; // Redirigir a detalles del evento
+                    //  window.location.href = `/detallesEvento/${eventId}`; // Redirigir a detalles del evento
                 })
                 .catch(error => {
                     console.error('Error al guardar los datos', error);
@@ -236,6 +251,12 @@
             // Si el tipo es "Mesas", hacer que el rectángulo sea circular
             if (type === 'Mesas') {
                 rect.style.borderRadius = '100%'; // Hacer el elemento circular
+            }
+
+            if (type === 'Escenario') {
+                rect.style.backgroundColor = '#031227'; // Fondo personalizado para 'Escenario'
+                rect.style.color = '#ffffff'; // Fondo personalizado para 'Escenario'
+                // Aquí puedes agregar más estilos si lo necesitas
             }
 
             // Añadir el texto al rectángulo
@@ -273,9 +294,9 @@
                 <span>${type} ${i + 1}</span>
             </div>
             <label for="${type}_X_${i}">X:</label>
-            <input type="number" id="${type}_X_${i}" name="${type}_X_${i}">
+            <input type="number" id="${type}_X_${i}" name="${type}_X_${i} max="21" min="1">
             <label for="${type}_Y_${i}">Y:</label>
-            <input type="number" id="${type}_Y_${i}" name="${type}_Y_${i}">
+            <input type="number" id="${type}_Y_${i}" name="${type}_Y_${i} max="21" min="1">
             <button class="draw-scenario" data-index="${i}" data-type="${type}">Dibujar ${type}</button>
         `;
                 container.appendChild(row);
@@ -284,22 +305,32 @@
             const buttons = container.querySelectorAll('.draw-scenario');
             buttons.forEach(button => {
                 button.addEventListener('click', function(event) {
-                    console.log("click para dibujar escenario")
+                    console.log("click para dibujar escenario");
                     event.preventDefault();
                     const index = this.getAttribute('data-index');
-                    console.log("index", index)
+                    console.log("index", index);
+
                     const x = parseInt(document.getElementById(`${type}_X_${index}`).value);
                     const y = parseInt(document.getElementById(`${type}_Y_${index}`).value);
 
-                    if (x > 0 && y > 0) {
-                        const label = `${type.charAt(0)}${parseInt(index) + 1}`; // Concatena la letra en minúscula y el número sin ceros adicionales
+                    // Verificar si los valores de x o y son mayores a 20
+                    if (x > 20 || y > 20) {
+                        alert("Los valores de X y Y no deben ser mayores a 20.");
+                        return; // Detener la ejecución si los valores no son válidos
+                    }
 
+                    if (x > 0 && y > 0) {
+                        const label =
+                            `${type.charAt(0)}${parseInt(index) + 1}`; // Concatena la letra en minúscula y el número sin ceros adicionales
                         drawRectangle(x, y, 1, 1, label, type);
                     } else {
-                        alert(`Por favor, introduce valores válidos para las coordenadas del ${type} ${index + 1}.`);
+                        alert(
+                            `Por favor, introduce valores válidos para las coordenadas del ${type} ${index + 1}.`
+                        );
                     }
                 });
             });
+
         }
 
         // Agregar listeners a los inputs de cantidad

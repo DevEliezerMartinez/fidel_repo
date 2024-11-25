@@ -16,20 +16,22 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
+        // Obtener las fechas de inicio y fin del mes actual
+        $currentMonthStart = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $currentMonthEnd = Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        // Obtener las fechas del filtro o usar las del mes actual como predeterminado
+        $dateStart = $request->input('date_start', $currentMonthStart);
+        $dateEnd = $request->input('date_end', $currentMonthEnd);
+
         // Obtener la ubicación seleccionada, por defecto será "Todos"
         $ubicacion = $request->input('ubicacion', 'Todos');
-
-        // Obtener las fechas de inicio y fin
-        $dateStart = $request->input('date_start');
-        $dateEnd = $request->input('date_end');
 
         // Inicializar la consulta
         $query = Event::query();
 
-        // Filtrar por fechas si están definidas
-        if ($dateStart && $dateEnd) {
-            $query->whereBetween('event_date', [$dateStart, $dateEnd]);
-        }
+        // Filtrar por fechas
+        $query->whereBetween('event_date', [$dateStart, $dateEnd]);
 
         // Filtrar por ubicación si está definida y no es "Todos"
         if ($ubicacion && $ubicacion !== 'Todos') {
@@ -39,8 +41,9 @@ class EventController extends Controller
         }
 
         // Obtener los eventos filtrados
-        $events = $query->get(['id', 'name', 'event_date', 'capacity', 'remaining_capacity', 'space_id']);
+        $events = $query->get(['id', 'name', 'color', 'event_date', 'capacity', 'remaining_capacity', 'space_id']);
 
+        //dd($events); // Esto te mostrará todos los eventos y sus valores, incluidos los colores
         // Obtener las ubicaciones para el filtro
         $locations = Location::all();
 
@@ -72,7 +75,7 @@ class EventController extends Controller
         $totalAsientos = $sillas->count();
 
         // Pasar los datos a la vista
-        return view('reservacionEvento', compact('event', 'mesa', 'sillas','asientosVendidos','totalAsientos', 'asientosDisponibles','tableId'));
+        return view('reservacionEvento', compact('event', 'mesa', 'sillas', 'asientosVendidos', 'totalAsientos', 'asientosDisponibles', 'tableId'));
     }
 
 
@@ -102,34 +105,40 @@ class EventController extends Controller
         $event = Event::with('space.location')->findOrFail($id);
 
         // Verificar si el evento tiene un layout asociado
-        $layout = EventLayout::where('event_id', $id)->first();
+        $layout = $event->layout; // Asegúrate de que el modelo Event tiene la relación 'layout'
 
-        // Obtener todas las mesas asociadas al layout
-        $tables = Table::where('event_layout_id', $layout->id)->get();
+        if ($layout) {
+            // Obtener todas las mesas asociadas al layout
+            $tables = Table::where('event_layout_id', $layout->id)->get();
 
-        // Calcular la capacidad total, asientos vendidos y disponibles
-        $capacidadTotal = $tables->sum('total_seats');
-        $vendidos = Seat::whereIn('table_id', $tables->pluck('id'))->where('is_reserved', 1)->count();
-        $disponibles = Seat::whereIn('table_id', $tables->pluck('id'))->where('is_reserved', 0)->count();
+            // Calcular la capacidad total, asientos vendidos y disponibles
+            $capacidadTotal = $tables->sum('total_seats');
+            $vendidos = Seat::whereIn('table_id', $tables->pluck('id'))->where('is_reserved', 1)->count();
+            $disponibles = Seat::whereIn('table_id', $tables->pluck('id'))->where('is_reserved', 0)->count();
 
-        // Calcular las mesas vendidas y disponibles
-        $mesasVendidas = $tables->filter(function ($table) {
-            return Seat::where('table_id', $table->id)->where('is_reserved', 0)->count() === 0;
-        })->count();
+            // Calcular las mesas vendidas y disponibles
+            $mesasVendidas = $tables->filter(function ($table) {
+                return Seat::where('table_id', $table->id)->where('is_reserved', 0)->count() === 0;
+            })->count();
 
-        $mesasDisponibles = $tables->count() - $mesasVendidas;
+            $mesasDisponibles = $tables->count() - $mesasVendidas;
 
-        // Pasar los datos a la vista
-        return view('detallesEvento', compact(
-            'event',
-            'layout',
-            'capacidadTotal',
-            'vendidos',
-            'disponibles',
-            'mesasVendidas',
-            'mesasDisponibles'
-        ));
+            // Pasar los datos a la vista con las variables calculadas
+            return view('detallesEvento', compact(
+                'event',
+                'layout',
+                'capacidadTotal',
+                'vendidos',
+                'disponibles',
+                'mesasVendidas',
+                'mesasDisponibles'
+            ));
+        }
+
+        // Si no hay layout, cargar la vista con solo el evento
+        return view('detallesEvento', compact('event'));
     }
+
 
 
 
@@ -139,7 +148,7 @@ class EventController extends Controller
 
     public function sh1()
     {
-        $users = User::all(); // O puedes usar alguna condición si deseas filtrar los usuarios
+        $users = User::with('location')->get();
 
         // Pasar los usuarios a la vista
         return view('adminUsuarios', compact('users'));
@@ -186,18 +195,18 @@ class EventController extends Controller
     }
 
     public function eventosMaster($id)
-{
-    $event = Event::with('space', 'layout')->findOrFail($id); // Incluye 'layout' en las relaciones cargadas
+    {
+        $event = Event::with('space', 'layout')->findOrFail($id); // Incluye 'layout' en las relaciones cargadas
 
-    // Verifica si el evento ya tiene un layout
-    if ($event->layout) {
-        // Redirige a /detallesEvento/{id}
-        return redirect()->route('detallesEvento', ['id' => $id]);
+        // Verifica si el evento ya tiene un layout
+        if ($event->layout) {
+            // Redirige a /detallesEvento/{id}
+            return redirect()->route('detallesEvento', ['id' => $id]);
+        }
+
+        $spaces = Space::all(); // Recuperar todos los espacios
+        return view('eventosMaster', compact('event', 'spaces')); // Pasar tanto el evento como los espacios a la vista
     }
-
-    $spaces = Space::all(); // Recuperar todos los espacios
-    return view('eventosMaster', compact('event', 'spaces')); // Pasar tanto el evento como los espacios a la vista
-}
 
 
 
@@ -212,24 +221,26 @@ class EventController extends Controller
             $validated = $request->validate([
                 'nombre' => 'required|string|max:255',
                 'fecha' => 'required|date',
+                'color_s' => 'required|string|max:255', // Validación para el color
                 'lugar' => 'required|string',
                 'capacidad' => 'required|integer|min:1'
             ]);
 
-            // Buscar la ubicación
-            $space = Space::find($request->input('lugar'));
+            // Buscar la ubicación (location)
+            $space = Location::find($request->input('lugar'));
 
             if (!$space) {
                 return response()->json(['error' => 'Ubicación no válida'], 400);
             }
 
-            // Crear el evento
+            // Crear el evento, ahora con color
             $event = Event::create([
                 'name' => $request->input('nombre'),
                 'event_date' => $request->input('fecha'),
                 'space_id' => $space->id,
                 'capacity' => $request->input('capacidad'),
                 'remaining_capacity' => $request->input('capacidad'),
+                'color' => $request->input('color_s'), // Asegúrate de asignar el color aquí
             ]);
 
             return response()->json(['success' => 'Evento creado exitosamente', 'event' => $event]);
@@ -241,6 +252,7 @@ class EventController extends Controller
             return response()->json(['error' => 'Error inesperado', 'details' => $e->getMessage()], 500);
         }
     }
+
 
     public function updateInfo(Request $request, $eventId)
     {

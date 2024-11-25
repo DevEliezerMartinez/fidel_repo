@@ -26,7 +26,10 @@ th, td {
     padding: 10px; /* Espaciado interno */
     text-align: left; /* Alineación del texto */
     font-family: "Poppins", sans-serif;
-    font-weight: 400 !important;
+    font-weight: 400;
+}
+th {
+    font-weight: 700;
 }
 
 /* Estilos para los íconos */
@@ -54,6 +57,7 @@ th, td {
     overflow: auto; /* Permite el scroll si es necesario */
     background-color: rgb(0,0,0); /* Color de fondo negro */
     background-color: rgba(0,0,0,0.4); /* Fondo negro con opacidad */
+    transition: all 5s ease-in-out;
 }
 
 /* Contenido del modal */

@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,6 +53,9 @@ Route::delete('/events/{id}', [EventController::class, 'destroy'])->name('events
 Route::post('/events', [EventController::class, 'store'])->name('events.store');
 
 Route::put('/events/{event}/toggle-status', [EventController::class, 'toggleStatus']);
+
+Route::get('/locations', [LocationController::class, 'index']);
+Route::post('/reservar', [ReservaController::class, 'reservar'])->name('reservar');
 
 
 // Rutas para el perfil

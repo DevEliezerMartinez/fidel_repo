@@ -84,10 +84,10 @@
 
 .info {
   background-color: var(--grey-color);
-  width: 65%; /* Asegúrate que esto sea igual que el width de .visualizer */
+  width: 95%; /* Asegúrate que esto sea igual que el width de .visualizer */
   border-radius: 1rem;
   position: relative; /* Mantén el contenedor relativo para que los rectángulos se posicionen dentro */
-  height: 600px; /* Asegúrate de que tenga la misma altura que .visualizer */
+  height: 690px; /* Asegúrate de que tenga la misma altura que .visualizer */
   overflow: hidden; /* Esto es importante para ocultar cualquier desbordamiento */
 }
 
@@ -242,7 +242,7 @@
 
 .row {
   display: grid;
-  grid-template-columns: 300px 2fr; /* La primera columna será más corta */
+  grid-template-columns: 250px 100px; /* La primera columna será más corta */
   gap: 10px; /* Opcional: añade espacio entre columnas */
 }
 

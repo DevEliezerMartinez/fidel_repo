@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Location;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,7 @@ class UserController extends Controller
             'apellido' => 'required|string|max:255', // Asegúrate de validar el apellido
             'correo' => 'required|email|unique:users,email',
             'puesto' => 'string|max:255',
+            'asignado' => 'required',
             'permisos' => 'required|string|in:1,2,3',
         ]);
 
@@ -27,7 +29,8 @@ class UserController extends Controller
             'username' => $username,
             'email' => $validated['correo'],
             'puesto' => $validated['puesto'], // Si no se asigna, se pone 'Sin asignar'
-            'role_id' => $validated['permisos'], // Asegúrate de tener un campo para roles
+            'role_id' => $validated['asignado'], // Asegúrate de tener un campo para roles
+            'belongs_to_location' => $validated['permisos'], // Asegúrate de tener un campo para roles
             'password' => bcrypt('12345678'), // Establece una contraseña por defecto
         ]);
 
@@ -37,12 +40,17 @@ class UserController extends Controller
 
     public function editJson(User $user)
     {
+        $locations = Location::all(); // Obtén todas las ubicaciones disponibles
+        
         return response()->json([
             'nombre' => $user->name,
             'apellido' => $user->lastname,
             'correo' => $user->email,
             'puesto' => $user->puesto ?: 'Sin asignar',
             'permisos' => $user->role_id,
+            'belongs_to_location' => $user->location->name ?? 'Sin asignar', // Si no tiene relación, muestra 'Sin asignar'
+            'location_id' => $user->location->id ?? 0, // Si no tiene relación, muestra 'Sin asignar'
+            'locations' => $locations, // Lista de todas las ubicaciones
         ]);
     }
 
@@ -54,6 +62,7 @@ class UserController extends Controller
             'apellido' => 'required|string|max:255',
             'correo' => 'required|email|unique:users,email,' . $user->id,
             'puesto' => 'nullable|string|max:255',
+            'asignado' => 'nullable|string|max:255',
             'permisos' => 'required|string|in:1,2,3',
         ]);
 
@@ -62,6 +71,7 @@ class UserController extends Controller
             'lastname' => $validated['apellido'],
             'email' => $validated['correo'],
             'puesto' => $validated['puesto'] ?? 'Sin asignar',
+            'belongs_to_location' => $validated['asignado'] ?? 'Sin asignar',
             'role_id' => $validated['permisos'],
         ]);
 

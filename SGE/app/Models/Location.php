@@ -16,6 +16,8 @@ class Location extends Model
     protected $fillable = [
         'name', 
         'administrator',
+        'color',
+
     ];
 
     // Relación con Space
