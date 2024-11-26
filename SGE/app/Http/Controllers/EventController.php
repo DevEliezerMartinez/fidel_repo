@@ -27,8 +27,8 @@ class EventController extends Controller
         // Obtener la ubicación seleccionada, por defecto será "Todos"
         $ubicacion = $request->input('ubicacion', 'Todos');
 
-        // Inicializar la consulta
-        $query = Event::query();
+        // Inicializar la consulta con las relaciones necesarias
+        $query = Event::with(['space.location']); // Carga las relaciones space y location
 
         // Filtrar por fechas
         $query->whereBetween('event_date', [$dateStart, $dateEnd]);
@@ -41,15 +41,15 @@ class EventController extends Controller
         }
 
         // Obtener los eventos filtrados
-        $events = $query->get(['id', 'name', 'color', 'event_date', 'capacity', 'remaining_capacity', 'space_id']);
+        $events = $query->get(['id', 'name', 'event_date', 'capacity', 'remaining_capacity', 'space_id']);
 
-        //dd($events); // Esto te mostrará todos los eventos y sus valores, incluidos los colores
         // Obtener las ubicaciones para el filtro
         $locations = Location::all();
 
         // Pasar los eventos, ubicaciones y filtros a la vista
         return view('panorama_gral', compact('events', 'locations', 'dateStart', 'dateEnd', 'ubicacion'));
     }
+
 
     public function reservacionEvento($eventId, $tableId)
     {
@@ -169,8 +169,8 @@ class EventController extends Controller
             });
         }
 
-        // Obtener los eventos filtrados
-        $events = $query->get(['id', 'name', 'event_date', 'space_id']);
+        // Obtener los eventos filtrados, incluyendo el campo `status`
+        $events = $query->get(['id', 'name', 'event_date', 'space_id', 'status']);
 
         // Obtener las ubicaciones para el filtro
         $locations = Location::all();
@@ -180,6 +180,7 @@ class EventController extends Controller
         // Pasar los eventos, ubicaciones y filtros a la vista
         return view('adminEventos', compact('events', 'locations', 'spaces', 'ubicacion'));
     }
+
 
 
     public function destroy($id)

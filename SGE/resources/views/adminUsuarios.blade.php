@@ -14,7 +14,6 @@
                         <th>Nombre</th>
                         <th>Correo</th>
                         <th>Puesto</th>
-                        <th>Asignado a: </th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -25,7 +24,6 @@
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td> <!-- Aquí usas el campo "correo" que agregaste -->
                             <td>{{ $user->puesto ?: 'Sin asignar' }}</td>
-                            <td>{{ $user->location->name ?? 'Sin asignar' }}</td>
 
                             <td>
                                 <a href="#" onclick="editUser({{ $user->id }})">

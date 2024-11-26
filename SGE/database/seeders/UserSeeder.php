@@ -18,9 +18,10 @@ class UserSeeder extends Seeder
 
         // Crea un usuario de prueba con un rol existente
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'username' => 'TU',
+            'name' => 'Fidel Jesus',
+            'lastname' => 'Pascual',
+            'email' => 'fidel@gmail.com',
+            'username' => 'FJ',
             'role_id' => 1, // Asegúrate de que este ID exista en RoleSeeder
         ]);
     }

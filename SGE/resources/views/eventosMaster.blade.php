@@ -220,7 +220,7 @@
                 .then(response => {
                     console.log("datso env", data)
                     console.log('Datos guardados exitosamente', response);
-                    //  window.location.href = `/detallesEvento/${eventId}`; // Redirigir a detalles del evento
+                      window.location.href = `/detallesEvento/${eventId}`; // Redirigir a detalles del evento
                 })
                 .catch(error => {
                     console.error('Error al guardar los datos', error);

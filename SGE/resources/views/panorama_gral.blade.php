@@ -101,7 +101,7 @@
                     <p>No se encontraron eventos para el rango de fechas seleccionado.</p>
                 @else
                     @foreach ($events as $event)
-                        <div class="event" style="border: 1px solid {{ $event->color }};">
+                        <div class="event" style="border: 3px solid {{ $event->space->location->color ?? '#000' }};">
                             <!-- Convertimos el nombre del evento en un enlace -->
                             <a id="name_event" href="{{ url('detallesEvento', ['id' => $event->id]) }}">
                                 {{ $event->name }}
@@ -124,6 +124,7 @@
         </section>
 
 
+
         <div class="leyends">
             <!-- Sección para leyendas -->
         </div>
@@ -139,48 +140,50 @@
             document.getElementById('ubicacion-' + ubicacion.replace(/\s+/g, '-').toLowerCase()).classList.add('active');
         }
 
-        const data = @json($events); // Esto inyecta los datos de los eventos como un objeto JavaScript
-        console.log("data de los events", data)
+        // Obtener los datos de eventos del backend
+        const data = @json($events); // Inyectar datos de eventos como objeto JavaScript
+        console.log("Datos de los eventos:", data);
 
-        // Crear un set para evitar leyendas duplicadas por ubicaciones
+        // Seleccionar el contenedor donde se mostrarán las leyendas
         const leyendsDiv = document.querySelector('.leyends');
-        leyendsDiv.innerHTML = ''; // Limpiar leyendas anteriores
+        leyendsDiv.innerHTML = ''; // Limpiar cualquier contenido previo
 
-        // Asegúrate de que 'data' esté correctamente definido y contiene los eventos
-        const ubicacionesSet = new Set(); // Este Set almacenará los colores asociados a las ubicaciones
+        // Crear un conjunto para almacenar ubicaciones únicas
+        const ubicacionesSet = new Set();
 
-        console.log("aqui no deberia haber nada", ubicacionesSet)
-
-        // Verifica que 'data' esté disponible y sea un array
+        // Verificar que `data` esté definido y sea un array
         if (data && Array.isArray(data)) {
             data.forEach(evento => {
-                // Asegúrate de que 'evento' tenga la propiedad 'space.name' y 'color' antes de añadirlo al Set
-                if (evento.space && evento.space.name && evento.color) {
-                    // Usamos 'evento.space.location.name' para identificar la ubicación única
-                    const ubicacion = evento.space.location.name ||
-                    'Sin ubicación'; // Default a 'Sin ubicación' si no está definida
+                // Validar que el evento tenga los datos necesarios
+                if (evento.space && evento.space.location && evento.space.location.name && evento.space.location
+                    .color) {
+                    const ubicacion = evento.space.location.name;
+                    const color = evento.space.location.color;
 
-                    // Verifica si la ubicación ya está en el Set para evitar duplicados
+                    // Añadir la ubicación al conjunto si no está ya presente
                     if (!ubicacionesSet.has(ubicacion)) {
-                        ubicacionesSet.add(ubicacion); // Añadimos la ubicación al Set
+                        ubicacionesSet.add(ubicacion);
 
+                        // Crear el elemento para la leyenda
                         const labelDiv = document.createElement('div');
                         labelDiv.classList.add('label_info');
 
-                        const colorClass = evento.color || ''; // Si no existe, poner una cadena vacía
-                        console.log("color para asignar", colorClass)
-
+                        // Crear el contenido de la leyenda
                         labelDiv.innerHTML = `
-                            <div class="bar" style="background-color: ${colorClass}"></div>
+                            <div class="bar" style="background-color: ${color}; width: 20px; height: 20px; display: inline-block; margin-right: 8px;"></div>
                             <span>${ubicacion}</span>
                         `;
 
+                        // Añadir la leyenda al contenedor
                         leyendsDiv.appendChild(labelDiv);
                     }
                 }
             });
+        } else {
+            console.warn("No se encontraron eventos o los datos no están en el formato esperado.");
         }
     </script>
+
 
 
     <script src="{{ asset('assets/js/datepicker.js') }}"></script>

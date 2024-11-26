@@ -7,16 +7,15 @@
 
         <div class="options_config">
             @foreach ($locations as $location)
-            <span id="ubicacion-{{ Str::slug($location->name) }}" data-ubicacion="{{ $location->name }}"
-                class="botton_option {{ $ubicacion == $location->name ? 'active' : '' }}"
-                onclick="setUbicacion('{{ $location->name }}')">
-                {{ $location->name }}
-            </span>
+                <span id="ubicacion-{{ Str::slug($location->name) }}" data-ubicacion="{{ $location->name }}"
+                    class="botton_option {{ $ubicacion == $location->name ? 'active' : '' }}"
+                    onclick="setUbicacion('{{ $location->name }}')">
+                    {{ $location->name }}
+                </span>
             @endforeach
 
             <span id="ubicacion-todos" data-ubicacion="Todos"
-                class="botton_option {{ $ubicacion == 'Todos' ? 'active' : '' }}"
-                onclick="setUbicacion('Todos')">
+                class="botton_option {{ $ubicacion == 'Todos' ? 'active' : '' }}" onclick="setUbicacion('Todos')">
                 Todos
             </span>
 
@@ -43,29 +42,31 @@
                 </thead>
                 <tbody>
                     @forelse ($events as $event)
-                    <tr>
-                        <td>{{ $event->name }}</td>
-                        <td>{{ \Carbon\Carbon::parse($event->event_date)->locale('es')->translatedFormat('d F Y') }}</td>
-                        <td>{{ $event->space->location->name ?? 'Sin ubicación' }}</td>
-                        <td>
-                            <label class="switch">
-                                <input type="checkbox" id="eventSwitch_{{ $event->id }}"
-                                    onchange="toggleEventStatus({{ $event->id }}, this.checked)"
-                                    {{ $event->status ? 'checked' : '' }}>
-
-                                <span class="slider round"></span>
-                            </label>
-                            <img src="{{ asset('assets/img/icons/edit.png') }}" alt="Editar" class="icon" title="Editar" onclick="editEvent({{ $event->id }})">
-                            <img src="{{ asset('assets/img/icons/delete.png') }}" alt="Eliminar" class="icon" title="Eliminar" onclick="deleteEvent({{ $event->id }})">
-
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>{{ $event->name }}</td>
+                            <td>{{ \Carbon\Carbon::parse($event->event_date)->locale('es')->translatedFormat('d F Y') }}
+                            </td>
+                            <td>{{ $event->space->location->name ?? 'Sin ubicación' }}</td>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="eventSwitch_{{ $event->id }}"
+                                        onchange="toggleEventStatus({{ $event->id }}, this.checked)"
+                                        {{ $event->status == 1 ? 'checked' : '' }}>
+                                    <span class="slider round"></span>
+                                </label>
+                                <img src="{{ asset('assets/img/icons/edit.png') }}" alt="Editar" class="icon"
+                                    title="Editar" onclick="editEvent({{ $event->id }})">
+                                <img src="{{ asset('assets/img/icons/delete.png') }}" alt="Eliminar" class="icon"
+                                    title="Eliminar" onclick="deleteEvent({{ $event->id }})">
+                            </td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="4">No hay eventos disponibles para esta ubicación.</td>
-                    </tr>
+                        <tr>
+                            <td colspan="4">No hay eventos disponibles para esta ubicación.</td>
+                        </tr>
                     @endforelse
                 </tbody>
+
             </table>
         </div>
     </section>
@@ -92,7 +93,7 @@
                 <select id="lugar" name="lugar" required>
                     <option value="">Selecciona una ubicación</option>
                     @foreach ($spaces as $space)
-                    <option value="{{ $space->id }}">{{ $space->name }}</option>
+                        <option value="{{ $space->id }}">{{ $space->name }}</option>
                     @endforeach
                 </select>
                 <button class="submit_button" id="submitButton" type="submit">Agregar Evento</button>

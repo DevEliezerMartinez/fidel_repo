@@ -83,6 +83,18 @@
                         </div>
 
                     </div>
+
+                    <div class="info_mesaReservar">
+                        <p>No. de Mesa seleccionada:</p>
+
+                        <input type="text" readonly value="" id="mesaSelected">
+
+
+                        <button class="submit_button">Reservar</button>
+
+
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -136,14 +148,13 @@
 
             // Dibujar cada grupo de elementos (solo letras que no son 'm')
             for (const char in groupedElements) {
-                // Obtener el primer elemento del grupo
-                const firstItem = groupedElements[char][0];
+                const items = groupedElements[char];
 
                 // Calcular las dimensiones y posición de la fusión
-                const width = groupedElements[char].reduce((total, item) => total + item.width, 0);
-                const height = Math.max(...groupedElements[char].map(item => item.height));
-                const x = firstItem.x; // La posición x del primer elemento
-                const y = firstItem.y; // La posición y del primer elemento
+                const x = Math.min(...items.map(item => item.x));
+                const y = Math.min(...items.map(item => item.y));
+                const width = Math.max(...items.map(item => item.x + item.width)) - x;
+                const height = Math.max(...items.map(item => item.y + item.height)) - y;
 
                 // Definir el label basado en la inicial
                 let displayLabel;
@@ -163,6 +174,7 @@
             }
         }
 
+
         // Modificar la función drawRectangle para manejar el label redondo
         function drawRectangle(x, y, width, height, label, type) {
             const rectangle = document.createElement('div');
@@ -176,15 +188,15 @@
             rectangle.style.top = `${y * cellSize}px`;
             rectangle.style.width = `${width * cellSize}px`;
             rectangle.style.height = `${height * cellSize}px`;
-            console.log("label es ",label)
+            console.log("label es ", label)
             // Verificar si el label es un elemento individual (tipo 'm') para hacerlo redondo
-            if (label.charAt(0) == 'e' || label.charAt(0)== 'p') {
+            if (label.charAt(0) == 'e' || label.charAt(0) == 'p') {
                 // Estilos para rectángulos con label que empieza con "E"
                 rectangle.style.backgroundColor = '#031227'; // Fondo de color oscuro
                 rectangle.style.color = '#ffffff'; // Color del texto blanco
             } else if (type === 'individual') {
                 rectangle.style.borderRadius = '50%'; // Hacerlo redondo
-                rectangle.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // Color diferente para distinguir
+                rectangle.style.backgroundColor = '#17C02E'; // Color diferente para distinguir
             } else {
                 rectangle.style.backgroundColor = 'rgba(0, 0, 255, 0.5)'; // Color del rectángulo agrupado
             }
@@ -194,18 +206,35 @@
 
             // Agregar el evento de clic solo a los elementos de mesa
             if (type === 'individual') {
-                rectangle.addEventListener('click', function() {
-                    alert(`Mesa seleccionada: ${label}`); // Mostrar el label en un alert
-                    // Redirigir con el evento y la mesa como parámetros
-                    const eventId = window.location.pathname.split('/')[
-                        2]; // Esto obtiene el ID del evento de la URL
-                    console.log(eventId)
-                    window.location.href = `reservacionEvento/${eventId}/${encodeURIComponent(label)}`;
-                });
+               z
             }
 
             // Agregar el rectángulo a la sección de información
             document.querySelector('.info').appendChild(rectangle);
+
+
+
         }
+
+        document.querySelector('.submit_button').addEventListener('click', function(event) {
+            event.preventDefault(); // Evita el comportamiento predeterminado
+            console.log("Intentando enviar...");
+
+            let labelMesa = document.getElementById("mesaSelected").value.trim(); // Elimina espacios en blanco
+            console.log("Mesa seleccionada:", labelMesa);
+
+            if (!labelMesa) {
+                // Si el campo está vacío, muestra un mensaje y no redirige
+                alert("Por favor, selecciona una mesa antes de continuar.");
+                console.warn("No se seleccionó ninguna mesa.");
+                return; // Salir de la función sin redirigir
+            }
+
+            const eventId = window.location.pathname.split('/')[2]; // Obtiene el ID del evento de la URL
+            console.log("ID del evento:", eventId);
+
+            // Redirige solo si el campo no está vacío
+            window.location.href = `reservacionEvento/${eventId}/${encodeURIComponent(labelMesa)}`;
+        });
     </script>
 </x-app-layout>
