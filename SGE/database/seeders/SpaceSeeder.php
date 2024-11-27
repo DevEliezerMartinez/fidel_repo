@@ -23,6 +23,13 @@ class SpaceSeeder extends Seeder
                 'id_location' => 2,  // Aquí debe ser el ID de otra ubicación existente
                 'created_at' => now(),
                 'updated_at' => now(),
+            ],
+            [
+                'name' => 'Sala publica',
+                'description' => 'Espacio para eventos publicos',
+                'id_location' => 3,  // Aquí debe ser el ID de otra ubicación existente
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ]);
     }

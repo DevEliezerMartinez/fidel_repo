@@ -87,13 +87,13 @@
                 <input type="date" id="fecha" name="fecha" required>
                 <label for="capacidad">Capacidad:</label>
                 <input type="number" id="capacidad" name="capacidad" required>
-                <label for="color">Color:</label>
-                <input type="color" id="color" name="color" required>
+               <!--  <label for="color">Color:</label>
+                <input type="color" id="color" name="color" required> -->
                 <label for="lugar">Lugar:</label>
                 <select id="lugar" name="lugar" required>
                     <option value="">Selecciona una ubicación</option>
-                    @foreach ($spaces as $space)
-                        <option value="{{ $space->id }}">{{ $space->name }}</option>
+                    @foreach ($locations as $location)
+                        <option value="{{ $location->id }}">{{ $location->name }}</option>
                     @endforeach
                 </select>
                 <button class="submit_button" id="submitButton" type="submit">Agregar Evento</button>
@@ -177,14 +177,14 @@
             const fecha = document.getElementById('fecha').value;
             const lugar = document.getElementById('lugar').value;
             const capacidad = document.getElementById('capacidad').value;
-            const color_s = document.getElementById('color').value;
+            /* const color_s = document.getElementById('color').value; */
 
             const eventData = {
                 nombre,
                 fecha,
                 lugar,
                 capacidad,
-                color_s
+               /*  color_s */
             };
             const url = editEventId ? `/events/${editEventId}` : "{{ route('events.store') }}";
             const method = editEventId ? "PUT" : "POST";

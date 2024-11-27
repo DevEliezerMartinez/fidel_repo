@@ -56,6 +56,7 @@ Route::put('/events/{event}/toggle-status', [EventController::class, 'toggleStat
 
 Route::get('/locations', [LocationController::class, 'index']);
 Route::post('/reservar', [ReservaController::class, 'reservar'])->name('reservar');
+Route::get('/ticket/reserva/{id}', [ReservaController::class, 'showTicket'])->name('showTicket');
 
 
 // Rutas para el perfil

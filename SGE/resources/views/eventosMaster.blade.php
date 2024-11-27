@@ -1,14 +1,6 @@
 <x-app-layout>
     <div class="main_header">
         <h3>Eventos</h3>
-        <!--  <img id="config" src="{{ asset('assets/img/icons/config.png') }}" alt="config">
-
-        <div class="options_config">
-            <span data-ubicacion="Palacio mundo imperial" class="botton_option">Palacio mundo imperial</span>
-            <span data-ubicacion="Princess mundo imperial" class="botton_option">Princess mundo imperial</span>
-            <span data-ubicacion="Todos" class="botton_option">Todos</span>
-            <input type="hidden" name="ubicacion" id="ubicacion" value="{{ $event->ubicacion ?? 'Todos' }}">
-        </div> -->
     </div>
 
     <form class="basic_info" method="POST" action="{{ route('events.update', $event->id) }}">
@@ -21,8 +13,8 @@
             </div>
             <div class="vertical">
                 <label for="descripcion">Descripción</label>
-                <input type="text" name="descripcion" id="descripcion" value="{{ $event->descripcion ?? '' }}">
-            </div>
+                <textarea name="descripcion" id="descripcion" rows="4" cols="50">{{ $event->descripcion ?? '' }}</textarea>
+                </div>
         </div>
 
         <div class="right_form">
@@ -89,10 +81,10 @@
                 <select name="sillasxmesa" id="sillasxmesa">
                     <option value="1">1</option>
                     <option value="2">2</option>
-                    <option value="">3</option>
+                    <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
-                    <option value="">6</option>
+                    <option value="6">6</option>
                     <option value="7">7</option>
                     <option value="8">8</option>
                     <option value="9">9</option>
@@ -103,17 +95,17 @@
             <p for="">Detalles de venta:</p>
             <div class="precios">
                 <span>Precio silla adulto $</span>
-                <input type="number" name="precioAdulto" id="precioAdulto">
+                <input type="number" name="precioAdulto" id="precioAdulto" value="{{ $event->precioAdulto ?? '' }}">
             </div>
 
             <div class="precios">
                 <span>Precio silla menor $</span>
-                <input type="number" name="precioMenor" id="precioMenor">
+                <input type="number" name="precioMenor" id="precioMenor" value="{{ $event->precioMenor ?? '' }}">
             </div>
 
             <div class="precios">
                 <span>Precio silla infantes $</span>
-                <input type="number" name="precioinfantes" id="precioInfantes">
+                <input type="number" name="precioinfantes" id="precioInfantes" value="{{ $event->precioInfante ?? '' }}">
             </div>
 
 
@@ -156,6 +148,7 @@
 
             // Calcular la capacidad como la multiplicación de mesasCantidad y sillasxmesa
             const capacidad = mesasCantidad * sillasxmesa;
+            console.log("datosextras", capacidad, "xmesa",sillasxmesa)
 
             // Recoger los valores de la cuadrícula directamente de los elementos generados en `.visualizer`
             const elements = document.querySelectorAll('.visualizer .rect');

@@ -27,6 +27,15 @@ class EventSeeder extends Seeder
                 'remaining_capacity' => 30,
                 'created_at' => now(),
                 'updated_at' => now(),
+            ],
+            [
+                'space_id' => 3,  // Relación con la tabla 'spaces'
+                'name' => 'Taller de Turismo Digital',
+                'event_date' => now()->addDays(1),  // 7 días después de la fecha actual
+                'capacity' => 30,
+                'remaining_capacity' => 30,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ]);
     }

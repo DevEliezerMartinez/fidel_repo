@@ -16,13 +16,13 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
-        // Obtener las fechas de inicio y fin del mes actual
-        $currentMonthStart = Carbon::now()->startOfMonth()->format('Y-m-d');
-        $currentMonthEnd = Carbon::now()->endOfMonth()->format('Y-m-d');
+        // Obtener las fechas de inicio y fin del mes actual con horas
+        $currentMonthStart = Carbon::now()->startOfMonth()->startOfDay()->format('Y-m-d H:i:s'); // 2024-11-01 00:00:00
+        $currentMonthEnd = Carbon::now()->endOfMonth()->endOfDay()->format('Y-m-d H:i:s');       // 2024-11-30 23:59:59
 
         // Obtener las fechas del filtro o usar las del mes actual como predeterminado
-        $dateStart = $request->input('date_start', $currentMonthStart);
-        $dateEnd = $request->input('date_end', $currentMonthEnd);
+        $dateStart = Carbon::parse($request->input('date_start', $currentMonthStart))->startOfDay()->format('Y-m-d H:i:s');
+        $dateEnd = Carbon::parse($request->input('date_end', $currentMonthEnd))->endOfDay()->format('Y-m-d H:i:s');
 
         // Obtener la ubicación seleccionada, por defecto será "Todos"
         $ubicacion = $request->input('ubicacion', 'Todos');
@@ -49,6 +49,7 @@ class EventController extends Controller
         // Pasar los eventos, ubicaciones y filtros a la vista
         return view('panorama_gral', compact('events', 'locations', 'dateStart', 'dateEnd', 'ubicacion'));
     }
+
 
 
     public function reservacionEvento($eventId, $tableId)
@@ -199,10 +200,13 @@ class EventController extends Controller
     {
         $event = Event::with('space', 'layout')->findOrFail($id); // Incluye 'layout' en las relaciones cargadas
 
-        // Verifica si el evento ya tiene un layout
+        // Verifica si el evento tiene un layout
         if ($event->layout) {
-            // Redirige a /detallesEvento/{id}
-            return redirect()->route('detallesEvento', ['id' => $id]);
+            // Mostrar la vista 'eventosMaster' en lugar de redirigir
+            $spaces = Space::all(); // Recuperar todos los espacios
+            // Pasar también el layout a la vista
+            $layout = $event->layout;
+            return view('eventosMaster', compact('event', 'spaces', 'layout')); // Incluye el layout en la vista
         }
 
         $spaces = Space::all(); // Recuperar todos los espacios
@@ -222,15 +226,15 @@ class EventController extends Controller
             $validated = $request->validate([
                 'nombre' => 'required|string|max:255',
                 'fecha' => 'required|date',
-                'color_s' => 'required|string|max:255', // Validación para el color
+                /* 'color_s' => 'required|string|max:255', // Validación para el color */
                 'lugar' => 'required|string',
                 'capacidad' => 'required|integer|min:1'
             ]);
 
             // Buscar la ubicación (location)
-            $space = Location::find($request->input('lugar'));
+            $loc = Location::find($request->input('lugar'));
 
-            if (!$space) {
+            if (!$loc) {
                 return response()->json(['error' => 'Ubicación no válida'], 400);
             }
 
@@ -238,10 +242,10 @@ class EventController extends Controller
             $event = Event::create([
                 'name' => $request->input('nombre'),
                 'event_date' => $request->input('fecha'),
-                'space_id' => $space->id,
+                'space_id' => $loc->id,
                 'capacity' => $request->input('capacidad'),
                 'remaining_capacity' => $request->input('capacidad'),
-                'color' => $request->input('color_s'), // Asegúrate de asignar el color aquí
+                /* 'color' => $request->input('color_s'), // Asegúrate de asignar el color aquí */
             ]);
 
             return response()->json(['success' => 'Evento creado exitosamente', 'event' => $event]);
@@ -304,9 +308,7 @@ class EventController extends Controller
             $mesasCantidad = $validatedData['mesasCantidad'];
             $sillasPorMesa = $validatedData['sillasxmesa'];
 
-            // El número global de sillas (seat_number) para todas las mesas
-            $seatNumber = 1;
-
+            // El número de sillas dentro de cada mesa se reinicia en 1 por mesa
             for ($i = 1; $i <= $mesasCantidad; $i++) {
                 // Crear la mesa con table_number incremental
                 $table = Table::updateOrCreate(
@@ -317,6 +319,9 @@ class EventController extends Controller
                     ]
                 );
 
+                // Reiniciar el número de sillas para esta mesa
+                $seatNumber = 1; // Reinicia el número de sillas por mesa
+
                 // Crear las sillas para esta mesa
                 for ($j = 1; $j <= $sillasPorMesa; $j++) {
                     Seat::updateOrCreate(
@@ -324,7 +329,7 @@ class EventController extends Controller
                         ['is_reserved' => 0]
                     );
 
-                    // Incrementar el número global de sillas
+                    // Incrementar el número de sillas para la mesa actual
                     $seatNumber++;
                 }
             }
@@ -340,6 +345,7 @@ class EventController extends Controller
             ], 500);
         }
     }
+
 
 
 

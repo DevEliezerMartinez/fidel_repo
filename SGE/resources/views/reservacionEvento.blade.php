@@ -24,11 +24,11 @@
                 <label for="Lugar">Lugar:</label>
                 <select name="Lugar" id="Lugar" disabled>
                     @if ($event->space && $event->space->location)
-                        <option value="{{ $event->space->location->id }}" selected>
-                            {{ $event->space->location->name }}
-                        </option>
+                    <option value="{{ $event->space->location->id }}" selected>
+                        {{ $event->space->location->name }}
+                    </option>
                     @else
-                        <option value="">Sin lugar asociado</option>
+                    <option value="">Sin lugar asociado</option>
                     @endif
                 </select>
             </div>
@@ -61,12 +61,12 @@
 
             <div class="detailsReservacion">
                 <p>No. de mesa</p>
-                <input type="text" name="mesaNumber" id="mesaNumber" value="{{ $tableId }}" readonly>
+                <input type="text" name="mesaNumber" id="mesaNumber" value="{{ $tableId }}" readonly disabled>
                 <input type="hidden" name="sillasNumber" id="sillasNumber" value="{{ $totalAsientos }}" readonly>
             </div>
             <div class="detailsReservacion">
                 <p>Fecha de reservacion</p>
-                <input type="date" name="fechaReservacion" id="fechaReservacion">
+                <input type="date" name="fechaReservacion" id="fechaReservacion" readonly>
             </div>
             <div class="detailsReservacion">
                 <p>Nombre de la reservacion</p>
@@ -78,7 +78,7 @@
                 <input type="number" name="asientos" id="asientos" readonly>
             </div>
 
-            <input type="text" name="asientosSeleccionados" id="asientosSeleccionados">
+            <input type="text" name="asientosSeleccionados" id="asientosSeleccionados" readonly>
 
             <div class="detailsPersona">
                 <div class="detail">
@@ -158,6 +158,7 @@
                 const infantes = parseInt(document.getElementById('infantes').value) || 0;
                 const menores = parseInt(document.getElementById('menores').value) || 0;
                 const name = document.getElementById('name').value.trim(); // Remover espacios
+                const seleccionados = document.getElementById('asientosSeleccionados').value // Remover espacios
                 const fechaReservacion = document.getElementById('fechaReservacion').value.trim();
 
                 // Verificar si los campos requeridos están llenos
@@ -177,33 +178,53 @@
                     // Si coinciden, proceder con la acción (enviar formulario o lo que desees)
                     alert("La cantidad de personas coincide con los asientos disponibles.");
 
+                    let url = window.location.pathname;
+                    let urlSegments = url.split('/');
+                    let eventId = urlSegments[3]; // Ajusta este índice según la estructura de la URL
+                    let tableId = urlSegments[4]; // Ajusta este índice según la estructura de la URL
+                    console.log(eventId)
+                    tableId = tableId.charAt(1)
+                    console.log("mesa", tableId);
+
                     // Crear un objeto con los datos a enviar
                     const reservaData = {
                         name: name,
-                        fechaReservacion: fechaReservacion,
+                        reservation_date: fechaReservacion,
+                        seats_reserved: seleccionados,
                         adultos: adultos,
                         infantes: infantes,
                         menores: menores,
-                        asientos: asientos
+                        asientos: asientos,
+                        event_id: eventId,
+                        table_number: tableId
                     };
 
-                    // Enviar los datos al endpoint con fetch
-                    fetch('/api/reservar', {
+                    fetch('/reservar', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             },
-                            body: JSON.stringify(reservaData) // Convierte los datos a formato JSON
+                            body: JSON.stringify(reservaData), // Convierte los datos a formato JSON
                         })
                         .then(response => {
                             if (!response.ok) {
-                                throw new Error('Error en la respuesta del servidor');
+                                // Verificar si la respuesta no es 2xx, puede ser 422 o 500
+                                return response.json().then(data => {
+                                    throw new Error(data.message || 'Error en la respuesta del servidor');
+                                });
+
                             }
-                            return response.json(); // Si la respuesta es JSON, la parsea
+                            return response.json(); // Si la respuesta es OK, procesarla como JSON
                         })
                         .then(data => {
                             if (data.success) {
                                 alert("Reserva realizada con éxito.");
+                                console.log(data); // Verifica el ID en la consola
+                                console.log(data.reservation.id); // Verifica el ID en la consola
+
+                                // Redireccionar directamente con el ID como parámetro en la URL
+                                window.location.href = "/ticket/reserva/" + data.reservation.id;
                             } else {
                                 alert(data.message || "Hubo un error al realizar la reserva.");
                             }
@@ -212,6 +233,7 @@
                             console.error('Error al enviar la reserva:', error);
                             alert("Hubo un error al enviar los datos. Inténtalo más tarde.");
                         });
+
                 } else {
                     // Si no coinciden, mostrar un mensaje de error
                     alert("La suma de Adultos, Infantes y Menores debe ser igual al número de asientos.");
