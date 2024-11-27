@@ -206,7 +206,11 @@
 
             // Agregar el evento de clic solo a los elementos de mesa
             if (type === 'individual') {
-               z
+                rectangle.addEventListener('click', function() {
+                    console.log(`Mesa seleccionada: ${label}`);
+                    document.getElementById("mesaSelected").value = label
+
+                });
             }
 
             // Agregar el rectángulo a la sección de información
