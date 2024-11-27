@@ -6,8 +6,8 @@
     <div class="ticket">
         <div class="card_ticket">
             <div class="card_header">
-                <img src="./assets/img/Logos/logo_color.png" alt="">
-                <div class="number_ticket">#{{ $reservation->id }}</div> <!-- Número de ticket -->
+            <img src="{{ asset('assets/img/Logos/logo_color.png') }}" alt="">
+            <div class="number_ticket">#{{ $reservation->id }}</div> <!-- Número de ticket -->
             </div>
 
             <div class="card_body">
@@ -67,10 +67,16 @@
 
                 <div class="row_ticket">
                     <p>Total:</p>
-                    <span>{{ $total }}</span> <!-- Total calculado -->
+                    <span>{{ number_format($total, 2, '.', ',') }} MXN</span> <!-- Total calculado con formato moneda -->
+
+                  
                 </div>
 
             </div>
+        </div>
+
+        <div class="download_ticket submit_button">
+            Descargar
         </div>
     </div>
 

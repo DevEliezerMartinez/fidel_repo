@@ -19,7 +19,11 @@ class Reservation extends Model
         'seats_reserved',
         'status',
         'name',
-        'total'
+        'total',
+        'adultos',
+        'menores',
+        'infantes'
+
     ];
 
     // Relación con la tabla 'tables'

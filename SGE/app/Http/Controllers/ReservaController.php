@@ -72,7 +72,7 @@ class ReservaController extends Controller
                 ->whereIn('seat_number', $seatNumbers)
                 ->update(['is_reserved' => 1]);
 
-            // Crear la reserva y almacenar el total
+            // Crear la reserva y almacenar el total, junto con los detalles de los adultos, infantes y menores
             $reservation = Reservation::create([
                 'user_id' => $userId,  // Usamos el ID del usuario logueado
                 'event_id' => $validatedData['event_id'],
@@ -82,6 +82,9 @@ class ReservaController extends Controller
                 'status' => 1,
                 'name' => $validatedData['name'],
                 'total' => $total,  // Guardamos el total calculado
+                'adultos' => $validatedData['adultos'],  // Guardamos los adultos
+                'infantes' => $validatedData['infantes'],  // Guardamos los infantes
+                'menores' => $validatedData['menores'],  // Guardamos los menores
             ]);
 
             // Crear el ticket (en este caso, guardando null o generando un ticket_pdf si es necesario)
@@ -108,6 +111,7 @@ class ReservaController extends Controller
             ], 500); // Código 500 para errores internos del servidor
         }
     }
+
 
 
     public function showTicket($id)

@@ -47,6 +47,7 @@
 .disponibles {
     background-color: green;
 }
+
 .vendidas {
     background-color: red;
 }
@@ -104,20 +105,28 @@
 
 .info {
     background-color: var(--grey-color);
-    width: 95%; /* Asegúrate que esto sea igual que el width de .visualizer */
+    width: 95%;
+    /* Asegúrate que esto sea igual que el width de .visualizer */
     border-radius: 1rem;
-    position: relative; /* Mantén el contenedor relativo para que los rectángulos se posicionen dentro */
-    height: 690px; /* Asegúrate de que tenga la misma altura que .visualizer */
-    overflow: hidden; /* Esto es importante para ocultar cualquier desbordamiento */
+    position: relative;
+    /* Mantén el contenedor relativo para que los rectángulos se posicionen dentro */
+    height: 690px;
+    /* Asegúrate de que tenga la misma altura que .visualizer */
+    overflow: hidden;
+    /* Esto es importante para ocultar cualquier desbordamiento */
 }
 
 .rectangle {
-    position: absolute; /* Asegúrate de que esté en relación al contenedor .info */
+    position: absolute;
+    /* Asegúrate de que esté en relación al contenedor .info */
     /*background-color: rgba(0, 0, 255, 0.133); /* Color del rectángulo */
     /* border: 2px solid blue; /* Borde para visualizar */
-    color: white; /* Color del texto dentro del rectángulo */
-    text-align: center; /* Centra el texto */
-    display: flex; /* Flex para centrar texto vertical y horizontalmente */
+    color: white;
+    /* Color del texto dentro del rectángulo */
+    text-align: center;
+    /* Centra el texto */
+    display: flex;
+    /* Flex para centrar texto vertical y horizontalmente */
     justify-content: center;
     align-items: center;
 }
@@ -146,15 +155,19 @@
     width: 15px;
     height: 15px;
 }
+
 .detailsMesa {
     padding: 3rem 1rem;
     width: 70%;
-    height: 400px; /* Altura suficiente para acomodar los silladetail */
-    position: relative; /* Necesario para posicionar los silladetail */
+    height: 400px;
+    /* Altura suficiente para acomodar los silladetail */
+    position: relative;
+    /* Necesario para posicionar los silladetail */
 }
 
 .mainMesa {
-    width: 300px; /* Diámetro del círculo central */
+    width: 300px;
+    /* Diámetro del círculo central */
     height: 300px;
     border-radius: 100%;
     background-color: var(--blue-color);
@@ -163,10 +176,12 @@
     align-items: center;
     font-size: 2rem;
     color: var(--white-color);
-    position: absolute; /* Mantiene el elemento en el centro */
+    position: absolute;
+    /* Mantiene el elemento en el centro */
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Centra el elemento */
+    transform: translate(-50%, -50%);
+    /* Centra el elemento */
 }
 
 .silladetail {
@@ -178,7 +193,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute; /* Posición absoluta para colocar alrededor de mainMesa */
+    position: absolute;
+    /* Posición absoluta para colocar alrededor de mainMesa */
 }
 
 .container {
@@ -188,7 +204,8 @@
 .detailsReservacion {
     display: flex;
 }
-.detailsReservacion:nth-child(2) input{
+
+.detailsReservacion:nth-child(2) input {
     text-align: center;
     height: 4rem;
     width: 4rem;
@@ -244,6 +261,9 @@
     justify-content: center;
     width: 80%;
     margin: auto;
+    background-color: white;
+    padding: 0rem 3rem 3rem 3rem;
+
 }
 
 .card_header {
@@ -263,14 +283,17 @@
     flex-direction: column;
     gap: 2rem;
 }
+
 .card_body h3 {
     text-align: center;
 }
 
 .row_ticket {
     display: grid;
-    grid-template-columns: 250px 100px; /* La primera columna será más corta */
-    gap: 10px; /* Opcional: añade espacio entre columnas */
+    grid-template-columns: 250px 100px;
+    /* La primera columna será más corta */
+    gap: 10px;
+    /* Opcional: añade espacio entre columnas */
 }
 
 .row_ticket p {
