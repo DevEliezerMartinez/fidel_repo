@@ -128,12 +128,16 @@ class ReservaController extends Controller
         $infantes = $reservation->infantes;
         $menores = $reservation->menores;
 
+       // Obtener los detalles del layout del evento desde 'event_layouts'
+    $eventLayout = \App\Models\EventLayout::where('event_id', $event->id)->first();
+    $layout = $eventLayout ? $eventLayout->layout_json : null;
+
         // Calcular el total
         $total = ($event->precioAdulto * $adultos) +
             ($event->precioInfante * $infantes) +
             ($event->precioMenor * $menores);
 
         // Retornar la vista con la información de la reserva y el desglose de costos
-        return view('ticket', compact('reservation', 'total', 'adultos', 'infantes', 'menores', 'event'));
+        return view('ticket', compact('reservation', 'total', 'adultos', 'infantes', 'menores', 'event', 'layout'));    
     }
 }
