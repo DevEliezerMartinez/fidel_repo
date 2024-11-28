@@ -2,7 +2,6 @@
     <div class="main_header">
         <h3>Ticket Gral</h3>
     </div>
-    <pre>{{ json_encode($layout, JSON_PRETTY_PRINT) }}</pre>
 
     <div class="ticket">
         <div class="card_ticket">
@@ -78,19 +77,51 @@
             <div class="info"></div>
         </div>
 
-        <div class="download_ticket submit_button">
+        <div class="download_ticket submit_button" onclick="downloadPDF()">
             Descargar
         </div>
+
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     <script>
-    @if (isset($layout) && !empty($layout))
+        function downloadPDF() {
+            const cardTicket = document.querySelector('.card_ticket');
+
+            // Opciones para el PDF
+            const options = {
+                filename: `ticket_${new Date().toISOString().slice(0, 10)}.pdf`,
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 1
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'legal',
+                    orientation: 'portrait'
+                },
+            };
+
+            // Generar PDF
+            html2pdf()
+                .set(options)
+                .from(cardTicket)
+                .save();
+        }
+    </script>
+
+
+    <script>
+        @if(isset($layout) && !empty($layout))
         // Si layout_json está disponible, parsear el JSON
         const layoutData = JSON.parse(`{!! $layout !!}`);
         renderConfig(layoutData); // Llamar a la función con los datos parseados
-    @else
+        @else
         // Si no hay datos, puedes manejar el caso aquí o mostrar un error
         console.warn('No hay datos de layout disponibles.');
-    @endif
+        @endif
 
 
 
@@ -195,27 +226,6 @@
 
 
         }
-
-        document.querySelector('.submit_button').addEventListener('click', function(event) {
-            event.preventDefault(); // Evita el comportamiento predeterminado
-            console.log("Intentando enviar...");
-
-            let labelMesa = document.getElementById("mesaSelected").value.trim(); // Elimina espacios en blanco
-            console.log("Mesa seleccionada:", labelMesa);
-
-            if (!labelMesa) {
-                // Si el campo está vacío, muestra un mensaje y no redirige
-                alert("Por favor, selecciona una mesa antes de continuar.");
-                console.warn("No se seleccionó ninguna mesa.");
-                return; // Salir de la función sin redirigir
-            }
-
-            const eventId = window.location.pathname.split('/')[2]; // Obtiene el ID del evento de la URL
-            console.log("ID del evento:", eventId);
-
-            // Redirige solo si el campo no está vacío
-            window.location.href = `reservacionEvento/${eventId}/${encodeURIComponent(labelMesa)}`;
-        });
     </script>
 
 </x-app-layout>

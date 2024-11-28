@@ -9,13 +9,16 @@ class RoleSeeder extends Seeder
 {
     public function run()
     {
-        // Verificar si existen registros en la tabla 'roles'
-        if (DB::table('roles')->exists()) {
-            // Vaciar la tabla 'roles' si ya tiene datos
-            DB::table('roles')->truncate();
-        }
+        // Desactivar restricciones de claves foráneas
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        // Insertar los roles predeterminados (user, admin, master)
+        // Vaciar la tabla 'roles'
+        DB::table('roles')->truncate();
+
+        // Reactivar restricciones de claves foráneas
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        // Insertar los roles predeterminados
         DB::table('roles')->insert([
             ['id' => 1, 'name' => 'user', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 2, 'name' => 'admin', 'created_at' => now(), 'updated_at' => now()],

@@ -5,6 +5,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ReservaController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -57,7 +58,7 @@ Route::put('/events/{event}/toggle-status', [EventController::class, 'toggleStat
 Route::get('/locations', [LocationController::class, 'index']);
 Route::post('/reservar', [ReservaController::class, 'reservar'])->name('reservar');
 Route::get('/ticket/reserva/{id}', [ReservaController::class, 'showTicket'])->name('showTicket');
-
+Route::get('/ticket/{id}/download', [TicketController::class, 'downloadTicket'])->name('ticket.download');
 
 // Rutas para el perfil
 Route::middleware('auth')->group(function () {

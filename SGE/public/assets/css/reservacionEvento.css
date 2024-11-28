@@ -103,6 +103,11 @@
     font-weight: 400;
 }
 
+.force_red {
+    background-color: rgba(255, 0, 0, 1) !important; /* Fondo rojo con !important */
+}
+
+
 .info {
     background-color: var(--grey-color);
     width: 95%;
@@ -118,15 +123,10 @@
 
 .rectangle {
     position: absolute;
-    /* Asegúrate de que esté en relación al contenedor .info */
-    /*background-color: rgba(0, 0, 255, 0.133); /* Color del rectángulo */
-    /* border: 2px solid blue; /* Borde para visualizar */
+   
     color: white;
-    /* Color del texto dentro del rectángulo */
     text-align: center;
-    /* Centra el texto */
     display: flex;
-    /* Flex para centrar texto vertical y horizontalmente */
     justify-content: center;
     align-items: center;
 }
@@ -263,7 +263,13 @@
     margin: auto;
     background-color: white;
     padding: 0rem 3rem 3rem 3rem;
+    page-break-inside: avoid; /* Evita que se divida dentro de una página */
 
+}
+
+.card_ticket .info {
+    page-break-before: always; /* Inicia en una nueva página */
+    margin-top: 0;
 }
 
 .card_header {

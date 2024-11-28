@@ -2,6 +2,7 @@
     <div class="main_header">
         <h3>Eventos</h3>
     </div>
+    
 
     <form class="basic_info" method="POST" action="{{ route('events.update', $event->id) }}">
         @csrf
@@ -14,7 +15,7 @@
             <div class="vertical">
                 <label for="descripcion">Descripción</label>
                 <textarea name="descripcion" id="descripcion" rows="4" cols="50">{{ $event->descripcion ?? '' }}</textarea>
-                </div>
+            </div>
         </div>
 
         <div class="right_form">
@@ -30,9 +31,9 @@
                 <label for="Lugar">Lugar:</label>
                 <select name="lugar" id="Lugar">
                     @foreach ($spaces as $space)
-                        <option value="{{ $space->id }}" {{ $event->space_id == $space->id ? 'selected' : '' }}>
-                            {{ $space->name }}
-                        </option>
+                    <option value="{{ $space->id }}" {{ $event->space_id == $space->id ? 'selected' : '' }}>
+                        {{ $space->name }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -46,39 +47,71 @@
             <p>Mapa:</p>
             <div class="row">
                 <label for="Columnas">Columnas: X</label>
-                <input type="number" name="number" id="columnas" max="20" min="1">
+                <input
+                    type="number"
+                    name="number"
+                    id="columnas"
+                    max="20"
+                    min="1"
+                    {{ isset($layout) ? 'disabled readonly' : '' }}>
                 <label for="Filas">Filas: Y</label>
-                <input type="number" name="number" id="filas" max="20" min="1">
+                <input
+                    type="number"
+                    name="number"
+                    id="filas"
+                    max="20"
+                    min="1"
+                    {{ isset($layout) ? 'disabled readonly' : '' }}>
             </div>
-            <button id="draw-rect">Dibujar Rectángulo</button> <!-- Botón para dibujar el rectángulo -->
+            <button
+                id="draw-rect"
+                {{ isset($layout) ? 'disabled' : '' }}>
+                Dibujar Rectángulo
+            </button>
 
             <p>Escenario</p>
             <div class="row">
                 <label for="escenarioCantidad">Cantidad:</label>
-                <input type="number" name="number" id="escenarioCantidad" max="2" min="1">
+                <input
+                    type="number"
+                    name="number"
+                    id="escenarioCantidad"
+                    max="2"
+                    min="1"
+                    {{ isset($layout) ? 'disabled readonly' : '' }}>
             </div>
             <div id="escenarioRows"></div>
 
             <p>Pista</p>
             <div class="row">
                 <label for="pistaCantidad">Cantidad:</label>
-                <input type="number" name="number" id="pistaCantidad">
+                <input
+                    type="number"
+                    name="number"
+                    id="pistaCantidad"
+                    {{ isset($layout) ? 'disabled readonly' : '' }}>
             </div>
             <div id="pistaRows"></div>
 
             <p>Mesas</p>
             <div class="row">
                 <label for="mesasCantidad">Cantidad:</label>
-                <input name="mesas" type="number" name="number" id="mesasCantidad">
+                <input
+                    name="mesas"
+                    type="number"
+                    name="number"
+                    id="mesasCantidad"
+                    {{ isset($layout) ? 'disabled readonly' : '' }}>
             </div>
             <div id="mesasRows"></div>
 
-            <!-- Aquí es donde añadimos el Select dinámico de Sillas por Mesa -->
             <p for="sillasxmesa">Sillas x mesa</p>
-
             <div class="cantidad_sillas_container">
                 <span>Cantidad: </span>
-                <select name="sillasxmesa" id="sillasxmesa">
+                <select
+                    name="sillasxmesa"
+                    id="sillasxmesa"
+                    {{ isset($layout) ? 'disabled readonly' : '' }}>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -92,27 +125,48 @@
                 </select>
             </div>
 
-            <p for="">Detalles de venta:</p>
+            <p>Detalles de venta:</p>
             <div class="precios">
                 <span>Precio silla adulto $</span>
-                <input type="number" name="precioAdulto" id="precioAdulto" value="{{ $event->precioAdulto ?? '' }}">
+                <input
+                    type="number"
+                    name="precioAdulto"
+                    id="precioAdulto"
+                    value="{{ $event->precioAdulto ?? '' }}">
             </div>
 
             <div class="precios">
                 <span>Precio silla menor $</span>
-                <input type="number" name="precioMenor" id="precioMenor" value="{{ $event->precioMenor ?? '' }}">
+                <input
+                    type="number"
+                    name="precioMenor"
+                    id="precioMenor"
+                    value="{{ $event->precioMenor ?? '' }}">
             </div>
 
             <div class="precios">
                 <span>Precio silla infantes $</span>
-                <input type="number" name="precioinfantes" id="precioInfantes" value="{{ $event->precioInfante ?? '' }}">
+                <input
+                    type="number"
+                    name="precioinfantes"
+                    id="precioInfantes"
+                    value="{{ $event->precioInfante ?? '' }}">
             </div>
 
+            <input
+                type="hidden"
+                name="to_edit"
+                id="to_edit"
+                value="{{ isset($layout) ? 'true' : 'false' }}">
 
-            <input class="submitPrincipal" id="save" type="submit" value="Guardar cambios">
-
-
+            <input
+                class="submitPrincipal"
+                id="save"
+                type="submit"
+                value="{{ isset($layout) ? 'Actualizar datos' : 'Guardar cambios' }}">
         </form>
+
+
     </section>
 
     <script>
@@ -145,10 +199,11 @@
             const precioAdulto = document.getElementById('precioAdulto').value;
             const precioInfante = document.getElementById('precioInfantes').value;
             const precioMenor = document.getElementById('precioMenor').value;
+            const to_edit_input = document.getElementById('to_edit').value;
 
             // Calcular la capacidad como la multiplicación de mesasCantidad y sillasxmesa
             const capacidad = mesasCantidad * sillasxmesa;
-            console.log("datosextras", capacidad, "xmesa",sillasxmesa)
+            console.log("datosextras", capacidad, "xmesa", sillasxmesa)
 
             // Recoger los valores de la cuadrícula directamente de los elementos generados en `.visualizer`
             const elements = document.querySelectorAll('.visualizer .rect');
@@ -173,8 +228,7 @@
                     width: parseFloat(element.style.width) / (100 / 21), // Ancho relativo
                     height: parseFloat(element.style.height) / (100 / 21), // Altura relativa
                     label: element.innerText, // Etiqueta del elemento
-                    type: element.classList.contains('circle') ? 'Mesas' :
-                    'Other', // Determina el tipo basado en la clase
+                    type: element.classList.contains('circle') ? 'Mesas' : 'Other', // Determina el tipo basado en la clase
                     styles: {
                         borderRadius: element.style.borderRadius,
                         textAlign: element.style.textAlign,
@@ -191,6 +245,7 @@
 
             // Crear un objeto con todos los datos que enviarás al servidor
             const data = {
+                to_edit_input: to_edit_input,
                 nombre: nombre,
                 descripcion: descripcion,
                 fecha: fechaInicio,
@@ -211,13 +266,23 @@
             // Enviar los datos al servidor utilizando AJAX con axios
             axios.put(`/events/${eventId}`, data)
                 .then(response => {
-                    console.log("datso env", data)
-                    console.log('Datos guardados exitosamente', response);
-                      window.location.href = `/detallesEvento/${eventId}`; // Redirigir a detalles del evento
+                    console.log("Datos enviados", data);
+                    console.log('Respuesta del servidor', response);
+
+                    if (response.data.layout === 'nuevo') {
+                        // Redirigir a los detalles del evento si es nuevo
+                        alert('Evento creado correctamente');
+                        window.location.href = `/detallesEvento/${eventId}`;
+                    } else {
+                        // Mostrar un alert si solo se actualizó
+                        alert('Evento actualizado correctamente');
+                    }
                 })
                 .catch(error => {
                     console.error('Error al guardar los datos', error);
+                    alert('Ocurrió un error al guardar los datos');
                 });
+
         }
     </script>
 

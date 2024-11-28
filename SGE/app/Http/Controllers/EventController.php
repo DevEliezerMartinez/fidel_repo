@@ -33,6 +33,19 @@ class EventController extends Controller
         // Filtrar por fechas
         $query->whereBetween('event_date', [$dateStart, $dateEnd]);
 
+        // Obtener el usuario actual
+        $user = auth()->user();
+
+        // Si el usuario tiene un `role_id` de 1, filtrar por la ubicación a la que pertenece
+        if ($user->role_id == 1) {
+            // Asumiendo que cada usuario tiene un campo `belonging_to_location` para asociar la ubicación
+            $userLocationId = $user->belongs_to_location; // Cambia esto si el campo es otro
+
+            $query->whereHas('space', function ($query) use ($userLocationId) {
+                $query->where('id_location', $userLocationId);
+            });
+        }
+
         // Filtrar por ubicación si está definida y no es "Todos"
         if ($ubicacion && $ubicacion !== 'Todos') {
             $query->whereHas('space.location', function ($query) use ($ubicacion) {
@@ -124,10 +137,19 @@ class EventController extends Controller
 
             $mesasDisponibles = $tables->count() - $mesasVendidas;
 
+            // Obtener la información de los asientos para cada mesa
+            foreach ($tables as $table) {
+                // Agregar la propiedad 'all_seats_reserved' a cada mesa
+                $table->all_seats_reserved = Seat::where('table_id', $table->id)
+                    ->where('is_reserved', 1)
+                    ->count() === $table->total_seats;
+            }
+
             // Pasar los datos a la vista con las variables calculadas
             return view('detallesEvento', compact(
                 'event',
                 'layout',
+                'tables',
                 'capacidadTotal',
                 'vendidos',
                 'disponibles',
@@ -147,9 +169,15 @@ class EventController extends Controller
 
 
 
+
     public function sh1()
     {
         $users = User::with('location')->get();
+
+        // Verificar si el usuario tiene rol 1 (administrador o similar)
+        if (auth()->user()->role_id == 1) {
+            return redirect()->route('dashboard'); // Redirige al dashboard si el rol es 1
+        }
 
         // Pasar los usuarios a la vista
         return view('adminUsuarios', compact('users'));
@@ -157,6 +185,12 @@ class EventController extends Controller
 
     public function sh2(Request $request)
     {
+
+        // Verificar si el usuario tiene rol 1 (administrador o similar)
+        if (auth()->user()->role_id == 1 || auth()->user()->role_id ==2) {
+            return redirect()->route('dashboard'); // Redirige al dashboard si el rol es 1
+        }
+
         // Obtener la ubicación seleccionada, por defecto será "Todos"
         $ubicacion = $request->input('ubicacion', 'Todos');
 
@@ -261,81 +295,111 @@ class EventController extends Controller
 
     public function updateInfo(Request $request, $eventId)
     {
-        // Validación de los datos recibidos
-        $validatedData = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'required|string|max:255',
-            'fecha' => 'required|date',
-            'capacidad' => 'required|integer|min:1',
-            'lugar' => 'required|exists:spaces,id',
-            'configuraciones' => 'required',
-            'mesasCantidad' => 'required|integer|min:1',
-            'sillasxmesa' => 'required|integer|min:1',
-            'precioInfante' => 'required|integer',
-            'precioAdulto' => 'required|integer',
-            'precioMenor' => 'required|integer',
-        ]);
-
         try {
+            // Obtener el valor de `to_edit_input` del request y convertirlo en booleano
+            $toEdit = $request->input('to_edit_input') === 'true';
+
+            // Configurar reglas de validación dinámicas según el valor de `to_edit`
+            $rules = [
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'required|string|max:255',
+                'fecha' => 'required|date',
+                'lugar' => 'required|exists:spaces,id',
+                'precioAdulto' => 'required|integer',
+                'precioMenor' => 'required|integer',
+                'precioInfante' => 'required|integer',
+            ];
+
+            // Si `toEdit` es falso, agregar validaciones para campos adicionales
+            if (!$toEdit) {
+                $rules = array_merge($rules, [
+                    'capacidad' => 'required|integer|min:1',
+                    'configuraciones' => 'required',
+                    'mesasCantidad' => 'required|integer|min:1',
+                    'sillasxmesa' => 'required|integer|min:1',
+                ]);
+            }
+
+            // Validar los datos recibidos
+            $validatedData = $request->validate($rules);
+
             // Buscar el evento por su ID
             $event = Event::findOrFail($eventId);
 
-            // Actualizar los datos del evento
-            $event->name = $validatedData['nombre'];
-            $event->event_date = $validatedData['fecha'];
-            $event->descripcion = $validatedData['descripcion'];
-            $event->capacity = $validatedData['capacidad'];
-            $event->space_id = $validatedData['lugar'];
+            // Variables para rastrear el estado de operaciones
+            $isNewLayout = false;
+            $newTablesCount = 0;
+            $newSeatsCount = 0;
 
-            $event->precioInfante = $validatedData['precioInfante'];
+            // Actualizar los campos básicos siempre
+            $event->name = $validatedData['nombre'];
+            $event->descripcion = $validatedData['descripcion'];
+            $event->event_date = $validatedData['fecha'];
+            $event->space_id = $validatedData['lugar'];
             $event->precioAdulto = $validatedData['precioAdulto'];
             $event->precioMenor = $validatedData['precioMenor'];
+            $event->precioInfante = $validatedData['precioInfante'];
+
+            // Si `toEdit` es falso, actualizar campos adicionales
+            if (!$toEdit) {
+                $event->capacity = $validatedData['capacidad'];
+                $event->remaining_capacity = $validatedData['capacidad'];
+
+                // Guardar configuración en `event_layouts`
+                $layout = EventLayout::updateOrCreate(
+                    ['event_id' => $event->id],
+                    [
+                        'layout_json' => $validatedData['configuraciones'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+
+                // Determinar si el layout fue creado o actualizado
+                $isNewLayout = $layout->wasRecentlyCreated;
+
+                // Crear mesas y sillas
+                $mesasCantidad = $validatedData['mesasCantidad'];
+                $sillasPorMesa = $validatedData['sillasxmesa'];
+
+                for ($i = 1; $i <= $mesasCantidad; $i++) {
+                    // Crear o actualizar la mesa
+                    $table = Table::updateOrCreate(
+                        ['event_layout_id' => $layout->id, 'table_number' => $i],
+                        [
+                            'total_seats' => $sillasPorMesa,
+                            'available_seats' => $sillasPorMesa,
+                        ]
+                    );
+
+                    // Contar nuevas mesas
+                    if ($table->wasRecentlyCreated) {
+                        $newTablesCount++;
+                    }
+
+                    // Crear o actualizar las sillas para la mesa
+                    for ($j = 1; $j <= $sillasPorMesa; $j++) {
+                        $seat = Seat::updateOrCreate(
+                            ['table_id' => $table->id, 'seat_number' => $j],
+                            ['is_reserved' => 0]
+                        );
+
+                        // Contar nuevas sillas
+                        if ($seat->wasRecentlyCreated) {
+                            $newSeatsCount++;
+                        }
+                    }
+                }
+            }
 
             // Guardar los cambios del evento
             $event->save();
 
-            // Guardar configuración en event_layouts
-            $layout = EventLayout::updateOrCreate(
-                ['event_id' => $event->id],
-                [
-                    'layout_json' => $validatedData['configuraciones'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]
-            );
-
-            // Crear mesas y sillas
-            $mesasCantidad = $validatedData['mesasCantidad'];
-            $sillasPorMesa = $validatedData['sillasxmesa'];
-
-            // El número de sillas dentro de cada mesa se reinicia en 1 por mesa
-            for ($i = 1; $i <= $mesasCantidad; $i++) {
-                // Crear la mesa con table_number incremental
-                $table = Table::updateOrCreate(
-                    ['event_layout_id' => $layout->id, 'table_number' => $i],
-                    [
-                        'total_seats' => $sillasPorMesa,
-                        'available_seats' => $sillasPorMesa,
-                    ]
-                );
-
-                // Reiniciar el número de sillas para esta mesa
-                $seatNumber = 1; // Reinicia el número de sillas por mesa
-
-                // Crear las sillas para esta mesa
-                for ($j = 1; $j <= $sillasPorMesa; $j++) {
-                    Seat::updateOrCreate(
-                        ['table_id' => $table->id, 'seat_number' => $seatNumber],
-                        ['is_reserved' => 0]
-                    );
-
-                    // Incrementar el número de sillas para la mesa actual
-                    $seatNumber++;
-                }
-            }
-
             return response()->json([
-                'success' => 'Evento, mesas y sillas actualizados exitosamente',
+                'success' => 'Evento actualizado exitosamente',
+                'layout' => $isNewLayout ? 'nuevo' : 'actualizado',
+                'mesas' => $newTablesCount > 0 ? "{$newTablesCount} mesas nuevas" : 'Mesas actualizadas',
+                'sillas' => $newSeatsCount > 0 ? "{$newSeatsCount} sillas nuevas" : 'Sillas actualizadas',
             ], 200);
         } catch (\Exception $e) {
             // Manejo de errores
@@ -345,6 +409,10 @@ class EventController extends Controller
             ], 500);
         }
     }
+
+
+
+
 
 
 

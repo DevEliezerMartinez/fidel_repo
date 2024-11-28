@@ -42,6 +42,7 @@
         <p>Asientos disponibles</p>
         <span class="info_mesa disponibles">{{ $asientosDisponibles }}</span>
 
+
         <div class="tiempo">
             <p>Tiempo</p>
             <div class="time" id="timer">
@@ -244,14 +245,14 @@
 
 
     <script>
-        render()
+        render();
         document.getElementById("fechaReservacion").value = new Date().toISOString().split('T')[0];
 
         function render() {
-            // Número de sillas a generar (puedes cambiar este valor)
-            let cantidad_s = document.getElementById("sillasNumber").value
-            console.log(cantidad_s);
-            const numberOfSilladetails = cantidad_s; // Cambia este número según sea necesario
+            // Suponiendo que $sillas ya es un array de objetos con is_reserved
+            const sillasData = @json($sillas); // Esto pasa los datos de las sillas desde el backend
+
+            const numberOfSilladetails = sillasData.length; // Usamos la longitud de sillasData
 
             // Obtiene el contenedor de detalles
             const detailsMesa = document.querySelector('.detailsMesa');
@@ -270,55 +271,66 @@
             // Inicializa el contador de asientos seleccionados
             let asientosContador = 0;
 
-            for (let i = 0; i < numberOfSilladetails; i++) {
+            sillasData.forEach((silla, i) => {
                 // Crea un nuevo div para silladetail
                 const silladetail = document.createElement('div');
                 silladetail.className = 'silladetail';
-                silladetail.textContent = i + 1; // Añade el número progresivo
+                silladetail.textContent = silla.seat_number; // Usa el número de asiento
 
                 // Asigna un ID único al silladetail
                 silladetail.id = `silladetail-${i + 1}`; // Por ejemplo: silladetail-1, silladetail-2, etc.
 
                 // Calcula la posición de cada silladetail
                 const angle = (i / numberOfSilladetails) * (2 * Math.PI); // Convierte a radianes
-                const x = radius * Math.cos(angle) + centerX -
-                    15; // Ajusta para centrar (15 es la mitad del ancho de silladetail)
+                const x = radius * Math.cos(angle) + centerX - 15; // Ajusta para centrar (15 es la mitad del ancho de silladetail)
                 const y = radius * Math.sin(angle) + centerY - 15; // Ajusta para centrar
 
                 // Establece las posiciones calculadas
                 silladetail.style.left = `${x}px`;
                 silladetail.style.top = `${y}px`;
 
+                // Verifica si la silla está reservada
+                if (silla.is_reserved == 1) {
+                    // Si está reservado, ponlo de color rojo y no seleccionable
+                    silladetail.style.backgroundColor = 'red'; // Rojo para reservado
+                    silladetail.classList.add('disabled'); // Añadir clase para inhabilitar la selección
+                    silladetail.style.pointerEvents = 'none'; // Deshabilita la interacción
+                } else {
+                    // Si está disponible, ponlo de color verde
+                    silladetail.style.backgroundColor = 'green'; // Verde para disponible
+                }
+
                 // Añade el silladetail al contenedor
                 detailsMesa.appendChild(silladetail);
 
-                // Añade el evento click al silladetail
-                silladetail.addEventListener('click', function() {
-                    const silladetailNumber = silladetail.id.split('-')[
-                        1]; // Obtiene el número después de "silladetail-"
+                // Añade el evento click al silladetail solo si no está reservado
+                if (silla.is_reserved == 0) {
+                    silladetail.addEventListener('click', function() {
+                        const silladetailNumber = silladetail.id.split('-')[1]; // Obtiene el número después de "silladetail-"
 
-                    // Añadir o quitar la clase selected
-                    if (silladetail.classList.contains('selected')) {
-                        silladetail.classList.remove('selected'); // Remueve la clase si ya está presente
-                        // Elimina el número del input
-                        asientosInput.value = asientosInput.value.replace(new RegExp(`-?${silladetailNumber}`, 'g'),
-                            '').replace(/^-/, ''); // Elimina el número seleccionado
-                        asientosContador--; // Decrementa el contador
-                    } else {
-                        silladetail.classList.add('selected'); // Añade la clase si no está presente
-                        // Verifica si el input ya tiene algún valor
-                        if (asientosInput.value) {
-                            asientosInput.value += '-'; // Añade un guion si ya hay asientos seleccionados
+                        // Añadir o quitar la clase selected
+                        if (silladetail.classList.contains('selected')) {
+                            silladetail.classList.remove('selected'); // Remueve la clase si ya está presente
+                            // Elimina el número del input
+                            asientosInput.value = asientosInput.value.replace(new RegExp(`-?${silladetailNumber}`, 'g'), '').replace(/^-/, ''); // Elimina el número seleccionado
+                            asientosContador--; // Decrementa el contador
+                        } else {
+                            silladetail.classList.add('selected'); // Añade la clase si no está presente
+                            // Verifica si el input ya tiene algún valor
+                            if (asientosInput.value) {
+                                asientosInput.value += '-'; // Añade un guion si ya hay asientos seleccionados
+                            }
+                            asientosInput.value += silladetailNumber; // Agrega el número del silladetail
+                            asientosContador++; // Incrementa el contador
                         }
-                        asientosInput.value += silladetailNumber; // Agrega el número del silladetail
-                        asientosContador++; // Incrementa el contador
-                    }
 
-                    // Actualiza el valor del campo numérico de asientos
-                    document.getElementById('asientos').value = asientosContador;
-                });
-            }
+                        // Actualiza el valor del campo numérico de asientos
+                        document.getElementById('asientos').value = asientosContador;
+                    });
+                }
+            });
         }
     </script>
+
 
 </x-app-layout>

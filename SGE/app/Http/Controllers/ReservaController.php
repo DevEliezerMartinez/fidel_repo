@@ -87,6 +87,10 @@ class ReservaController extends Controller
                 'menores' => $validatedData['menores'],  // Guardamos los menores
             ]);
 
+            // Actualizar la capacidad restante del evento
+            $event->remaining_capacity -= $totalPersonas; // Restamos la cantidad de personas
+            $event->save(); // Guardamos los cambios en la tabla events
+
             // Crear el ticket (en este caso, guardando null o generando un ticket_pdf si es necesario)
             $ticketPdf = null; // Aquí podrías generar un PDF si es necesario usando alguna librería como DomPDF.
 
@@ -114,6 +118,7 @@ class ReservaController extends Controller
 
 
 
+
     public function showTicket($id)
     {
         // Obtener la reserva por ID
@@ -128,9 +133,9 @@ class ReservaController extends Controller
         $infantes = $reservation->infantes;
         $menores = $reservation->menores;
 
-       // Obtener los detalles del layout del evento desde 'event_layouts'
-    $eventLayout = \App\Models\EventLayout::where('event_id', $event->id)->first();
-    $layout = $eventLayout ? $eventLayout->layout_json : null;
+        // Obtener los detalles del layout del evento desde 'event_layouts'
+        $eventLayout = \App\Models\EventLayout::where('event_id', $event->id)->first();
+        $layout = $eventLayout ? $eventLayout->layout_json : null;
 
         // Calcular el total
         $total = ($event->precioAdulto * $adultos) +
@@ -138,6 +143,6 @@ class ReservaController extends Controller
             ($event->precioMenor * $menores);
 
         // Retornar la vista con la información de la reserva y el desglose de costos
-        return view('ticket', compact('reservation', 'total', 'adultos', 'infantes', 'menores', 'event', 'layout'));    
+        return view('ticket', compact('reservation', 'total', 'adultos', 'infantes', 'menores', 'event', 'layout'));
     }
 }

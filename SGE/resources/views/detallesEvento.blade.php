@@ -7,121 +7,123 @@
     </div>
 
     @if (isset($layout)) <!-- Mostrar layout del evento -->
-        <div class="global_element">
-            <div id="layout-container">
-                <!--   <pre>{{ $layout->layout_json }}</pre>  --><!-- Muestra el JSON o úsalo para renderizar -->
+    <div class="global_element">
+        <div id="layout-container">
+            <!--   <pre>{{ $layout->layout_json }}</pre>  --><!-- Muestra el JSON o úsalo para renderizar -->
+        </div>
+
+        <form class="basic_info">
+
+            <div class="sideform">
+
+                <label for="descripcion">Descripción:</label>
+                <input type="hidden" name="descripcion" id="descripcion" readonly disabled value="">
+                <span> {{ $event->descripcion }}</span>
             </div>
 
-            <form class="basic_info">
+            <div class="right_form">
 
-                <div class="sideform">
-
-                    <label for="descripcion">Descripción:</label>
-                    <input type="hidden" name="descripcion" id="descripcion" readonly disabled value="">
-                    <span> {{ $event->descripcion }}</span>
-                </div>
-
-                <div class="right_form">
-
-                    <div class="options_conteiner">
-                        <label for="fecha">Fecha</label>
-                        <div class="options date_start">
-                            <img src="{{ asset('assets/img/icons/calendar.png') }}" alt="calendar">
+                <div class="options_conteiner">
+                    <label for="fecha">Fecha</label>
+                    <div class="options date_start">
+                        <img src="{{ asset('assets/img/icons/calendar.png') }}" alt="calendar">
 
 
-                            <input type="text" id="date_start" value="{{ $event->event_date }}" readonly disabled>
-                        </div>
-
-
+                        <input type="text" id="date_start" value="{{ $event->event_date }}" readonly disabled>
                     </div>
 
-                    <div class="lugar">
 
-                        <label for="Lugar">Lugar:</label>
-                        <select name="Lugar" id="Lugar" disabled>
-                            @if ($event->space && $event->space->location)
-                                <option value="{{ $event->space->location->id }}" selected>
-                                    {{ $event->space->location->name }}
-                                </option>
-                            @else
-                                <option value="">Sin lugar asociado</option>
-                            @endif
-                        </select>
-                    </div>
                 </div>
 
+                <div class="lugar">
 
-
-
-
-
-            </form>
-            <div class="infomesas">
-                <p>Mesas vendidas</p>
-                <span class="info_mesa vendidas">{{ $mesasVendidas }}</span>
-                <p>Mesas disponibles</p>
-                <span class="info_mesa disponibles">{{ $mesasDisponibles }}</span>
+                    <label for="Lugar">Lugar:</label>
+                    <select name="Lugar" id="Lugar" disabled>
+                        @if ($event->space && $event->space->location)
+                        <option value="{{ $event->space->location->id }}" selected>
+                            {{ $event->space->location->name }}
+                        </option>
+                        @else
+                        <option value="">Sin lugar asociado</option>
+                        @endif
+                    </select>
+                </div>
             </div>
 
 
 
-            <div class="details">
-
-                <div class="info"></div>
 
 
-                <div class="info_details">
+
+        </form>
+        <div class="infomesas">
+            <p>Mesas vendidas</p>
+            <span class="info_mesa vendidas">{{ $mesasVendidas }}</span>
+            <p>Mesas disponibles</p>
+            <span class="info_mesa disponibles">{{ $mesasDisponibles }}</span>
+        </div>
+
+
+
+        <div class="details">
+
+            <div class="info"></div>
+
+
+            <div class="info_details">
+                <div class="element">
                     <div class="element">
-                        <div class="element">
-                            <p>Capacidad total: <span id="capacidad">{{ $capacidadTotal }}</span></p>
-                        </div>
-                        <div class="element">
-                            <p>Asientos vendidos total: <span id="vendidos">{{ $vendidos }}</span></p>
-                        </div>
-                        <div class="element">
-                            <p>Asientos disponibles: <span id="disponibles">{{ $disponibles }}</span></p>
-                        </div>
-
+                        <p>Capacidad total: <span id="capacidad">{{ $capacidadTotal }}</span></p>
+                    </div>
+                    <div class="element">
+                        <p>Asientos vendidos total: <span id="vendidos">{{ $vendidos }}</span></p>
+                    </div>
+                    <div class="element">
+                        <p>Asientos disponibles: <span id="disponibles">{{ $disponibles }}</span></p>
                     </div>
 
-                    <div class="info_mesaReservar">
-                        <p>No. de Mesa seleccionada:</p>
+                </div>
 
-                        <input type="text" readonly value="" id="mesaSelected">
+                <div class="info_mesaReservar">
+                    <p>No. de Mesa seleccionada:</p>
 
-
-                        <button class="submit_button">Reservar</button>
-
+                    <input type="text" readonly value="" id="mesaSelected">
 
 
-                    </div>
+                    <button class="submit_button">Reservar</button>
+
+
+
                 </div>
             </div>
         </div>
+    </div>
     @else
-        <!-- Mostrar mensaje de no información -->
-        <div class="no_info">
-            <img src="{{ asset('assets/img/icons/alert.png') }}" alt="alert">
-            <p>Información no disponible</p>
-            <span>El evento no tiene layout asociado.</span>
-            <a href="{{ route('dashboard') }}">Regresar</a>
-        </div>
+    <!-- Mostrar mensaje de no información -->
+    <div class="no_info">
+        <img src="{{ asset('assets/img/icons/alert.png') }}" alt="alert">
+        <p>Información no disponible</p>
+        <span>El evento no tiene layout asociado.</span>
+        <a href="{{ route('dashboard') }}">Regresar</a>
+    </div>
     @endif
 
     <script src="{{ asset('assets/js/datepicker.js') }}"></script>
 
+
     <script>
         // Verificar si $layout y $layout->layout_json están definidos antes de ejecutar JavaScript
-        @if (isset($layout) && !empty($layout->layout_json))
-            // Si layout_json está disponible, parsear el JSON
-            const layoutData = JSON.parse(`{!! $layout->layout_json !!}`);
-            renderConfig(layoutData); // Llamar a la función con los datos parseados
+        @if(isset($layout) && !empty($layout -> layout_json))
+        // Si layout_json está disponible, parsear el JSON
+        const layoutData = JSON.parse(`{!! $layout->layout_json !!}`);
+        const tables = @json($tables); // Pasamos las mesas con la propiedad all_seats_reserved
+        renderConfig(layoutData, tables); // Llamar a la función con los datos parseados
         @else
-            // Si no hay datos, puedes manejar el caso aquí o mostrar un error
-            console.warn('No hay datos de layout disponibles.');
+        // Si no hay datos, puedes manejar el caso aquí o mostrar un error
+        console.warn('No hay datos de layout disponibles.');
         @endif
 
-        function renderConfig(configData) {
+        function renderConfig(configData, tables) {
             const groupedElements = {};
 
             // Agrupar elementos que empiezan con la misma letra (excepto 'm')
@@ -135,7 +137,7 @@
 
                 // Si es un elemento que empieza con 'm', dibujarlo individualmente
                 if (firstChar === 'm') {
-                    drawRectangle(item.x, item.y, item.width, item.height, item.label, 'individual');
+                    drawRectangle(item.x, item.y, item.width, item.height, item.label, 'individual', tables);
                 } else {
                     // Si el grupo no existe, crear uno nuevo
                     if (!groupedElements[firstChar]) {
@@ -170,15 +172,33 @@
                 }
 
                 // Dibujar el rectángulo agrupado
-                drawRectangle(x, y, width, height, displayLabel, 'grouped');
+                drawRectangle(x, y, width, height, displayLabel, 'grouped', tables);
             }
         }
 
 
-        // Modificar la función drawRectangle para manejar el label redondo
-        function drawRectangle(x, y, width, height, label, type) {
-            const rectangle = document.createElement('div');
+        // Modificar la función drawRectangle para manejar el label redondo y el fondo rojo para mesas reservadas
+        function drawRectangle(x, y, width, height, label, type, tables) {
+            let table; // Variable para la mesa
 
+            // Si el label empieza con 'M', es una mesa individual, buscamos por número
+            if (label.charAt(0) === 'M') {
+                const tableNumber = parseInt(label.substring(1)); // Extraemos el número de mesa (M1 -> 1)
+                table = tables.find(t => t.table_number === tableNumber); // Buscar la mesa por table_number
+            } else {
+                // Si el label no es una mesa (como 'esc', 'pista'), no buscamos en las mesas
+                console.log(`Elemento de grupo: ${label}`);
+                table = null;
+            }
+
+
+            // Si no se encuentra la mesa, mostrar advertencia
+            if (!table && label.charAt(0) === 'M') {
+                console.warn(`Mesa con número ${label} no encontrada.`);
+                return; // Salir de la función si no se encuentra la mesa
+            }
+
+            const rectangle = document.createElement('div');
             // Ajusta el tamaño de la cuadrícula
             const cellSize = 30; // Tamaño de cada celda
 
@@ -188,17 +208,23 @@
             rectangle.style.top = `${y * cellSize}px`;
             rectangle.style.width = `${width * cellSize}px`;
             rectangle.style.height = `${height * cellSize}px`;
-            console.log("label es ", label)
+
+            // Verificar si la mesa está completamente reservada
+            if (table && table.all_seats_reserved) {
+                rectangle.classList.add('force_red'); // Aplicar la clase 'force_red'
+        console.log(`Mesa ${table.table_number} está completamente reservada.`);
+            } else {
+                console.log(`Mesa ${table ? table.table_number : label} NO está completamente reservada.`);
+                rectangle.style.backgroundColor = 'rgba(0, 0, 255, 0.5)'; // Color por defecto para mesas no reservadas
+            }
+
             // Verificar si el label es un elemento individual (tipo 'm') para hacerlo redondo
             if (label.charAt(0) == 'e' || label.charAt(0) == 'p') {
-                // Estilos para rectángulos con label que empieza con "E"
                 rectangle.style.backgroundColor = '#031227'; // Fondo de color oscuro
                 rectangle.style.color = '#ffffff'; // Color del texto blanco
             } else if (type === 'individual') {
                 rectangle.style.borderRadius = '50%'; // Hacerlo redondo
-                rectangle.style.backgroundColor = '#17C02E'; // Color diferente para distinguir
-            } else {
-                rectangle.style.backgroundColor = 'rgba(0, 0, 255, 0.5)'; // Color del rectángulo agrupado
+                rectangle.style.backgroundColor = '#17C02E'; // Color diferente para mesas individuales
             }
 
             rectangle.innerText = label; // Agregar texto al rectángulo
@@ -208,17 +234,19 @@
             if (type === 'individual') {
                 rectangle.addEventListener('click', function() {
                     console.log(`Mesa seleccionada: ${label}`);
-                    document.getElementById("mesaSelected").value = label
-
+                    document.getElementById("mesaSelected").value = label;
                 });
             }
 
             // Agregar el rectángulo a la sección de información
             document.querySelector('.info').appendChild(rectangle);
-
-
-
         }
+
+
+
+
+
+
 
         document.querySelector('.submit_button').addEventListener('click', function(event) {
             event.preventDefault(); // Evita el comportamiento predeterminado
@@ -241,4 +269,5 @@
             window.location.href = `reservacionEvento/${eventId}/${encodeURIComponent(labelMesa)}`;
         });
     </script>
+
 </x-app-layout>
