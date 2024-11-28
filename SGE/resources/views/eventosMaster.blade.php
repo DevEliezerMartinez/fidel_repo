@@ -2,7 +2,7 @@
     <div class="main_header">
         <h3>Eventos</h3>
     </div>
-    
+
 
     <form class="basic_info" method="POST" action="{{ route('events.update', $event->id) }}">
         @csrf
@@ -204,6 +204,12 @@
             // Calcular la capacidad como la multiplicación de mesasCantidad y sillasxmesa
             const capacidad = mesasCantidad * sillasxmesa;
             console.log("datosextras", capacidad, "xmesa", sillasxmesa)
+
+            // Validación de campos obligatorios
+            if (!nombre || !descripcion || !fechaInicio || !espacio) {
+                alert('Por favor, complete todos los campos obligatorios: Nombre, Descripción, Fecha de Inicio y Lugar.');
+                return; // Detener la ejecución si falta algún campo obligatorio
+            }
 
             // Recoger los valores de la cuadrícula directamente de los elementos generados en `.visualizer`
             const elements = document.querySelectorAll('.visualizer .rect');
