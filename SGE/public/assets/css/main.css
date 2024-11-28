@@ -1,0 +1,209 @@
+.main_header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    position: relative;
+    z-index: 1;
+}
+.main_header img {
+    width: 2%;
+    height: 2%;
+}
+
+.animation_gear {
+    animation-name: gear;
+    animation-duration: .5s;
+}
+
+@keyframes gear {
+    from {
+        transform: rotate(0deg); /* Inicia sin rotación */
+    }
+    to {
+        transform: rotate(180deg); /* Completa un giro */
+    }
+}
+
+.options_conteiner {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+.filter_dates {
+    border: none;
+    background-color: transparent;
+}
+.options {
+    border: 1px solid;
+    border-radius: 1rem;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    max-width: 170px;
+}
+
+.options input {
+    border: none; /* Sin borde */
+    width: 60% !important;
+    background: transparent; /* Sin fondo */
+    font-size: inherit; /* Hereda el tamaño de fuente del contenedor */
+    color: inherit; /* Hereda el color del texto del contenedor */
+    padding: 0; /* Sin padding */
+    margin: 0; /* Sin margen */
+    outline: none; /* Sin borde al hacer foco */
+    width: 100%; /* Ocupa el 100% del ancho del contenedor */
+    cursor: pointer; /* Cambia el cursor a puntero al pasar sobre el input */
+    text-align: center;
+}
+
+.options img {
+    width: 10%;
+}
+
+.general_info {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+.total_events {
+    border: 1px solid var(--grey-color);
+    width: 35%;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.total_events p {
+    font-weight: 600;
+}
+
+.circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 1000rem;
+    padding: 1rem 1rem;
+    background: var(--dark-blue);
+    color: var(--white-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.events_info {
+    border: 1px solid var(--grey-color);
+    border-radius: 1rem;
+    padding: 1rem;
+    width: 55%;
+    display: flex;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.events_info p {
+    font-size: 0.8rem;
+}
+
+.card_event_info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.secondary_circles {
+    background-color: var(--bg-contrast);
+    width: 50px;
+    height: 50px;
+    border-radius: 100rem;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--primary-color);
+}
+
+.list_events {
+    height: 60vh;
+    overflow-y: scroll;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.event {
+    padding: 0.8rem;
+    border: 1px solid;
+    display: flex;
+    justify-content: space-evenly;
+    border-radius: 1rem;
+}
+
+.leyends {
+    display: flex;
+    flex-direction: row;
+    margin-top: 0.5rem;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+.bar {
+    width: 60px;
+    height: 5px;
+}
+
+.label_info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.blue {
+    border: 1px solid var(--dark-blue);
+}
+.alternative_blue {
+    border: 1px solid var(--alternative-blue);
+}
+
+.options_config {
+    padding: 1rem;
+    background: var(--bg-contrast);
+    display: none;
+    flex-direction: column;
+    border-radius: 1rem;
+    position: absolute;
+    z-index: 2;
+    right: 1%;
+    top: 80%;
+    transition: all 5s ease-in-out;
+}
+
+.options_config span {
+    font-size: 0.8rem;
+    text-decoration: none;
+    color: var(--dark-blue);
+}
+
+
+
+.options_config span:hover {
+    transition: all ease-in-out 0.3s;
+    color: var(--primary-color);
+}
+
+.options_config_active {
+    color: var(--primary-color) !important;
+}
+
+#name_event {
+    text-decoration: none;
+    color: var(--primary-color);
+}

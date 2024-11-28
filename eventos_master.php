@@ -335,7 +335,7 @@
 
 
 
-    <script src="./assets/js/menu_options.js"></script>
+ <!--    <script src="./assets/js/menu_options.js"></script> -->
     <script src="./assets/js/datepicker.js"></script>
 
     <!--   <script src="./assets/js/peticiones.js"></script> -->
