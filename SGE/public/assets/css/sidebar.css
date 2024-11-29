@@ -24,6 +24,10 @@
     text-align: center;
     padding: 0rem 1rem;
 }
+.logo_sidebar{
+    width: 90%;
+    margin: 1.3rem 0rem;
+}
 
 .location_space p{
    font-size: .9rem;
