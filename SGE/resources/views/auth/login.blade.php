@@ -3,7 +3,8 @@
     <div class="main_login">
         <div class="login-container">
             <!-- Icono de Usuario -->
-            <img src="https://img.icons8.com/ios-filled/100/000000/user-male-circle.png" alt="User Icon">
+          {{--   <img src="https://img.icons8.com/ios-filled/100/000000/user-male-circle.png" alt="User Icon"> --}}
+            <img src="{{ asset('assets/img/Logos/logo_blanco.png') }}" alt="Logo">
 
             <!-- Formulario de inicio de sesión -->
             <form method="POST" action="{{ route('login') }}">
@@ -64,7 +65,7 @@
     </div>
 
     <footer>
-        <img src="{{ asset('assets/img/Logos/logo_blanco.png') }}" alt="Logo">
+        <img src="{{ asset('assets/img/Logos/logo_blancoo.png') }}" alt="Logo">
     </footer>
 
     <script>

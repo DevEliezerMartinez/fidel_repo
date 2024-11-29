@@ -11,7 +11,8 @@
                 @endif
             </div>
 
-            <h2>Reservación de eventos</h2>
+           {{--  <h2>Reservación de eventos</h2> --}}
+           <img class="logo_sidebar" src="{{ asset('assets/img/Logos/logo_blanco.png') }}" alt="icon">
             <p class="welcome_user">Bienvenido {{ Auth::user()->name . ' ' . Auth::user()->lastname }}</p>
 
             <div class="location_space">
@@ -65,7 +66,7 @@
             </form>
 
             <div class="end_footer full_center">
-                <img src="{{ asset('assets/img/Logos/logo_blanco.png') }}" alt="icon">
+                <img src="{{ asset('assets/img/Logos/logo_blancoo.png') }}" alt="icon">
             </div>
         </div>
     </div>

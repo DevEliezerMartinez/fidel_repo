@@ -28,7 +28,9 @@ class EventController extends Controller
         $ubicacion = $request->input('ubicacion', 'Todos');
 
         // Inicializar la consulta con las relaciones necesarias
-        $query = Event::with(['space.location']); // Carga las relaciones space y location
+        $query = Event::with(['space.location']) // Carga las relaciones space y location
+            ->where('status', '<>', 0); // Filtrar eventos con status diferente de 0
+
 
         // Filtrar por fechas
         $query->whereBetween('event_date', [$dateStart, $dateEnd]);
@@ -187,7 +189,7 @@ class EventController extends Controller
     {
 
         // Verificar si el usuario tiene rol 1 (administrador o similar)
-        if (auth()->user()->role_id == 1 || auth()->user()->role_id ==2) {
+        if (auth()->user()->role_id == 1 || auth()->user()->role_id == 2) {
             return redirect()->route('dashboard'); // Redirige al dashboard si el rol es 1
         }
 
